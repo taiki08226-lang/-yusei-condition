@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#2f6b5f" />
+  <title>YUSEI CONDITION｜AIコンディションチェック</title>
+  <style>
+    :root{
+      --bg:#f7f5ef;
+      --card:#ffffff;
+      --ink:#22302c;
+      --muted:#65746f;
+      --line:#d9e0dc;
+      --main:#2f6b5f;
+      --main2:#e8f1ed;
+      --accent:#c49a5a;
+      --danger:#b94a48;
+      --shadow:0 10px 30px rgba(34,48,44,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;background:linear-gradient(180deg,#f7f5ef 0%,#eef5f1 100%);color:var(--ink);line-height:1.65}
+    header{position:sticky;top:0;z-index:10;background:rgba(247,245,239,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(217,224,220,.8)}
+    .wrap{max-width:980px;margin:0 auto;padding:16px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:42px;height:42px;border-radius:12px;background:var(--main);display:grid;place-items:center;color:#fff;font-weight:800;letter-spacing:.03em;box-shadow:var(--shadow)}
+    .brand h1{font-size:16px;line-height:1.2;margin:0}.brand p{font-size:12px;margin:2px 0 0;color:var(--muted)}
+    .hero{padding:22px 0 12px}.hero-card{background:var(--card);border-radius:26px;padding:22px;box-shadow:var(--shadow);border:1px solid rgba(217,224,220,.75)}
+    .eyebrow{display:inline-flex;gap:6px;align-items:center;background:var(--main2);color:var(--main);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700}
+    h2{font-size:28px;line-height:1.25;margin:14px 0 8px;letter-spacing:.01em} h3{font-size:18px;margin:0 0 10px} h4{font-size:15px;margin:20px 0 8px;color:var(--main)}
+    p{margin:0 0 10px}.lead{font-size:15px;color:var(--muted)}
+    .notice{background:#fff8ea;border:1px solid #edd9ae;color:#6b5327;border-radius:14px;padding:12px 14px;font-size:13px;margin-top:12px}
+    .grid{display:grid;gap:14px}.two{grid-template-columns:1fr}.three{grid-template-columns:1fr}
+    .card{background:var(--card);border:1px solid rgba(217,224,220,.9);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin:14px 0}
+    .section-title{display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px}
+    .badge{font-size:12px;color:var(--main);background:var(--main2);border-radius:999px;padding:4px 10px;font-weight:700;white-space:nowrap}
+    label{font-size:13px;color:var(--muted);font-weight:700;display:block;margin:12px 0 6px}
+    input[type="text"],input[type="number"],select,textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px 13px;font-size:16px;color:var(--ink);outline:none}textarea{min-height:92px;resize:vertical} input:focus,select:focus,textarea:focus{border-color:var(--main);box-shadow:0 0 0 3px rgba(47,107,95,.12)}
+    .consent{display:flex;gap:10px;align-items:flex-start;background:#f7fbf9;border:1px solid var(--line);border-radius:14px;padding:12px}.consent input{margin-top:4px;transform:scale(1.2)}.consent span{font-size:13px;color:var(--muted)}
+    .question{border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;background:#fff}.q-title{font-size:14px;font-weight:700;margin-bottom:10px}.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.scale label{margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:48px;border:1px solid var(--line);border-radius:10px;color:var(--ink);font-size:12px;background:#fafafa;font-weight:700}.scale input{accent-color:var(--main)}.scale small{font-size:10px;color:var(--muted);font-weight:500;line-height:1.1;text-align:center}
+    .score-grid{display:grid;grid-template-columns:1fr;gap:10px}.score-card{background:#f7fbf9;border:1px solid var(--line);border-radius:14px;padding:12px}.score-card strong{display:flex;justify-content:space-between;font-size:14px}.bar{height:9px;border-radius:999px;background:#e5ebe8;overflow:hidden;margin-top:8px}.bar span{display:block;height:100%;width:0;background:var(--main);border-radius:999px;transition:width .2s}.level{font-size:12px;color:var(--muted);margin-top:6px}
+    .upload{border:1px dashed #b9c7c1;border-radius:16px;padding:14px;background:#fbfdfc}.preview{margin-top:10px;border-radius:14px;overflow:hidden;background:#eef2f0;min-height:120px;display:grid;place-items:center;color:var(--muted);font-size:13px}.preview img{width:100%;display:block;height:auto}.hint{font-size:12px;color:var(--muted)}
+    .actions{position:sticky;bottom:0;background:rgba(247,245,239,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px 0;margin-top:20px;z-index:9}.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{appearance:none;border:none;border-radius:14px;padding:13px 12px;font-size:14px;font-weight:800;cursor:pointer}.btn.primary{background:var(--main);color:#fff}.btn.secondary{background:#fff;color:var(--main);border:1px solid var(--line)}.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}.btn.full{grid-column:1/-1}.btn:disabled{opacity:.45;cursor:not-allowed}
+    .output{white-space:pre-wrap;background:#10231f;color:#f2fffb;border-radius:16px;padding:14px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;max-height:360px;overflow:auto}.pill-row{display:flex;flex-wrap:wrap;gap:8px}.pill{border-radius:999px;background:var(--main2);color:var(--main);padding:5px 9px;font-size:12px;font-weight:700}
+    .footer{font-size:12px;color:var(--muted);padding:20px 0 80px;text-align:center}
+    .redflag{background:#fff1f1;border-color:#f0caca}.redflag h3{color:var(--danger)}
+
+    .memo-grid{display:grid;grid-template-columns:1fr;gap:12px}
+    .report-paper{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:14px;box-shadow:var(--shadow)}
+    .report-head{border-bottom:2px solid var(--main2);padding-bottom:10px;margin-bottom:12px}
+    .report-head strong{font-size:18px;color:var(--main)}
+    .report-meta{font-size:12px;color:var(--muted);margin-top:4px}
+    .report-block{border-left:4px solid var(--main2);padding:8px 0 8px 12px;margin:10px 0;white-space:pre-wrap}
+    .report-block h4{margin:0 0 4px;font-size:14px;color:var(--main)}
+    .habit-card{border:1px solid var(--line);border-radius:16px;background:#fbfdfc;padding:12px;margin:10px 0}
+    .days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px}
+    .days label{margin:0;border:1px solid var(--line);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;gap:4px;min-height:40px;font-size:12px;color:var(--ink);font-weight:700}
+    .mini-note{font-size:12px;color:var(--muted);background:#f7fbf9;border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:10px}
+    .print-report-only{display:none}
+
+    @media (min-width:760px){.wrap{padding:20px}.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:repeat(3,1fr)}.memo-grid{grid-template-columns:1fr 1fr}.score-grid{grid-template-columns:repeat(3,1fr)}.btns{display:flex;justify-content:flex-end}.btn.full{grid-column:auto}h2{font-size:38px}.hero-card{padding:30px}}
+    @media print{header,.actions,.btn,.upload input,.footer{display:none!important}body{background:#fff}.card,.hero-card{box-shadow:none;break-inside:avoid}.wrap{max-width:none}.output{color:#111;background:#f5f5f5}.preview{min-height:0}.question{break-inside:avoid}}
+  </style>
+</head>
+<body>
+<header><div class="wrap brand"><div class="logo">Y</div><div><h1>YUSEI CONDITION</h1><p>AIコンディションチェック｜姿勢と習慣の伴走ケア</p></div></div></header>
+<main class="wrap">
+  <section class="hero">
+    <div class="hero-card">
+      <span class="eyebrow">スマホ対応Webアプリ試作品</span>
+      <h2>今の身体・姿勢・習慣を<br>見える化する。</h2>
+      <p class="lead">セルフチェック、姿勢写真、自由記述をもとに、施術者が状態を整理し、習慣プランと施術方針の参考にするための入力フォームです。</p>
+      <div class="notice">このアプリは病気の診断や治療方針の決定を目的としたものではありません。入力内容はこの画面内で処理され、サーバー送信は行いません。</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-title"><h3>基本情報・同意確認</h3><span class="badge">Step 1</span></div>
+    <div class="grid two">
+      <div><label>管理番号・ニックネーム</label><input id="patientId" type="text" placeholder="例：No.001 / Aさん"></div>
+      <div><label>記入日</label><input id="date" type="text" placeholder="例：2026/07/02"></div>
+      <div><label>年齢</label><input id="age" type="number" inputmode="numeric" placeholder="例：45"></div>
+      <div><label>性別</label><select id="sex"><option value="">選択しない</option><option>女性</option><option>男性</option><option>その他・回答しない</option></select></div>
+    </div>
+    <div style="height:10px"></div>
+    <label class="consent"><input id="consent" type="checkbox"><span>このチェックは診断ではなく、身体・姿勢・生活習慣の状態整理とセルフケア提案の参考として使用することに同意します。強い痛み、しびれ、発熱、息苦しさ、急な体調変化などがある場合は医療機関への相談が必要な場合があります。</span></label>
+  </section>
+
+  <section class="card redflag">
+    <div class="section-title"><h3>安全確認</h3><span class="badge">必ず確認</span></div>
+    <p class="hint">該当がある場合、AI分析や施術提案の前に医療機関への相談も検討してください。</p>
+    <div class="grid two" id="redFlags"></div>
+    <label>補足</label><textarea id="redFlagNote" placeholder="気になる症状や経過があれば記入"></textarea>
+  </section>
+
+  <section class="card">
+    <div class="section-title"><h3>セルフチェック</h3><span class="badge">Step 2｜0〜4点</span></div>
+    <p class="hint">0：全くない／1：たまにある／2：時々ある／3：よくある／4：いつもある</p>
+    <div id="questions"></div>
+  </section>
+
+  <section class="card">
+    <div class="section-title"><h3>自由記述</h3><span class="badge">Step 3</span></div>
+    <label>今、一番気になっている症状や不調</label><textarea id="mainConcern"></textarea>
+    <label>改善したいこと・よくしたいこと</label><textarea id="improve"></textarea>
+    <label>もっと良くしたいこと・理想の状態</label><textarea id="ideal"></textarea>
+    <div class="grid two">
+      <div><label>いつ頃から気になっていますか？</label><textarea id="since"></textarea></div>
+      <div><label>どんな時に悪化しやすいですか？</label><textarea id="worse"></textarea></div>
+      <div><label>どんな時に楽になりますか？</label><textarea id="better"></textarea></div>
+      <div><label>施術や生活習慣サポートに期待していること</label><textarea id="expect"></textarea></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-title"><h3>姿勢写真</h3><span class="badge">Step 4</span></div>
+    <p class="hint">顔や個人情報が映らない形を推奨。画像はこの端末上でプレビューされるだけで、サーバー送信されません。</p>
+    <div class="grid three">
+      <div class="upload"><strong>正面</strong><input type="file" accept="image/*" data-preview="frontPreview"><div id="frontPreview" class="preview">画像プレビュー</div></div>
+      <div class="upload"><strong>横向き</strong><input type="file" accept="image/*" data-preview="sidePreview"><div id="sidePreview" class="preview">画像プレビュー</div></div>
+      <div class="upload"><strong>後ろ</strong><input type="file" accept="image/*" data-preview="backPreview"><div id="backPreview" class="preview">画像プレビュー</div></div>
+    </div>
+    <label>姿勢写真についての施術者メモ</label><textarea id="postureMemo" placeholder="例：頭部前方位、右肩下がり、骨盤前傾傾向など"></textarea>
+  </section>
+
+  <section class="card">
+    <div class="section-title"><h3>自動集計</h3><span class="badge">Step 5</span></div>
+    <div id="scores" class="score-grid"></div>
+    <h4>優先度の目安</h4>
+    <div id="priority" class="pill-row"></div>
+  </section>
+
+
+  <section class="card">
+    <div class="section-title"><h3>施術者メモ・見立て</h3><span class="badge">Step 6</span></div>
+    <p class="hint">患者さんにはそのまま見せず、施術者側の整理用として使います。</p>
+    <div class="memo-grid">
+      <div><label>施術者の見立て・状態整理</label><textarea id="practitionerAssessment" placeholder="例：首肩の緊張、自律神経負荷、睡眠不足が関連している可能性など"></textarea></div>
+      <div><label>施術方針メモ</label><textarea id="treatmentDirection" placeholder="例：頸肩部、胸郭、背部、骨盤周囲を中心に確認"></textarea></div>
+      <div><label>注意点・禁忌・医療機関連携の検討</label><textarea id="cautionMemo" placeholder="例：しびれが強い場合は医療機関相談を促す"></textarea></div>
+      <div><label>次回確認すること</label><textarea id="nextSessionPlan" placeholder="例：睡眠、痛みの変化、セルフケア実施率、姿勢写真の変化"></textarea></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-title"><h3>患者さん用レポート作成</h3><span class="badge">Step 7</span></div>
+    <p class="hint">点数・自由記述・施術者メモから、患者さんに渡すレポート下書きを作成します。内容は必ず施術者が確認・修正してください。</p>
+    <div class="btns" style="position:static;background:transparent;border:0;padding:0;margin:0 0 12px">
+      <button class="btn primary" onclick="generateReportDraft()">レポート下書きを作成</button>
+      <button class="btn secondary" onclick="copyReport()">レポートをコピー</button>
+    </div>
+    <div class="memo-grid">
+      <div><label>現在の状態まとめ</label><textarea id="reportCurrent"></textarea></div>
+      <div><label>チェック結果コメント</label><textarea id="reportScore"></textarea></div>
+      <div><label>姿勢から見える傾向</label><textarea id="reportPosture"></textarea></div>
+      <div><label>AI改善シミュレーション</label><textarea id="reportSimulation"></textarea></div>
+      <div><label>優先して整えるポイント</label><textarea id="reportPriorityText"></textarea></div>
+      <div><label>施術方針</label><textarea id="reportTreatment"></textarea></div>
+      <div><label>今週の習慣プラン</label><textarea id="reportHabits"></textarea></div>
+      <div><label>次回までの目標</label><textarea id="reportGoal"></textarea></div>
+    </div>
+    <label>患者さんへの一言</label><textarea id="reportMessage" placeholder="例：無理なく続けられるところから、一緒に整えていきましょう。"></textarea>
+    <div id="reportPaper" class="report-paper">
+      <div class="report-head"><strong>患者さん用レポート</strong><div class="report-meta">レポート下書きを作成すると、ここに表示されます。</div></div>
+      <div class="report-block">未作成</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-title"><h3>習慣プランニング</h3><span class="badge">Step 8</span></div>
+    <p class="hint">最初は1〜3個に絞ります。多く出しすぎず、1回1〜5分でできる内容から始めます。</p>
+    <label>今週の目的</label><textarea id="habitGoal" placeholder="例：首肩の負担を減らし、睡眠前に身体を落ち着ける"></textarea>
+    <div id="habitCards">
+      <div class="habit-card">
+        <strong>習慣 1</strong>
+        <label>内容</label><input id="habit1" type="text" placeholder="例：寝る前に深呼吸3分">
+        <label>タイミング・回数</label><input id="habit1Timing" type="text" placeholder="例：就寝前／1日1回">
+        <div class="days"><label><input type="checkbox" class="habitCheck" data-habit="1" value="月">月</label><label><input type="checkbox" class="habitCheck" data-habit="1" value="火">火</label><label><input type="checkbox" class="habitCheck" data-habit="1" value="水">水</label><label><input type="checkbox" class="habitCheck" data-habit="1" value="木">木</label><label><input type="checkbox" class="habitCheck" data-habit="1" value="金">金</label><label><input type="checkbox" class="habitCheck" data-habit="1" value="土">土</label><label><input type="checkbox" class="habitCheck" data-habit="1" value="日">日</label></div>
+      </div>
+      <div class="habit-card">
+        <strong>習慣 2</strong>
+        <label>内容</label><input id="habit2" type="text" placeholder="例：朝起きたら水を1杯">
+        <label>タイミング・回数</label><input id="habit2Timing" type="text" placeholder="例：起床後／1日1回">
+        <div class="days"><label><input type="checkbox" class="habitCheck" data-habit="2" value="月">月</label><label><input type="checkbox" class="habitCheck" data-habit="2" value="火">火</label><label><input type="checkbox" class="habitCheck" data-habit="2" value="水">水</label><label><input type="checkbox" class="habitCheck" data-habit="2" value="木">木</label><label><input type="checkbox" class="habitCheck" data-habit="2" value="金">金</label><label><input type="checkbox" class="habitCheck" data-habit="2" value="土">土</label><label><input type="checkbox" class="habitCheck" data-habit="2" value="日">日</label></div>
+      </div>
+      <div class="habit-card">
+        <strong>習慣 3</strong>
+        <label>内容</label><input id="habit3" type="text" placeholder="例：胸のストレッチ30秒×2回">
+        <label>タイミング・回数</label><input id="habit3Timing" type="text" placeholder="例：お風呂上がり／左右30秒">
+        <div class="days"><label><input type="checkbox" class="habitCheck" data-habit="3" value="月">月</label><label><input type="checkbox" class="habitCheck" data-habit="3" value="火">火</label><label><input type="checkbox" class="habitCheck" data-habit="3" value="水">水</label><label><input type="checkbox" class="habitCheck" data-habit="3" value="木">木</label><label><input type="checkbox" class="habitCheck" data-habit="3" value="金">金</label><label><input type="checkbox" class="habitCheck" data-habit="3" value="土">土</label><label><input type="checkbox" class="habitCheck" data-habit="3" value="日">日</label></div>
+      </div>
+    </div>
+    <div class="memo-grid">
+      <div><label>今週の身体の変化</label><textarea id="habitChange" placeholder="例：肩こり、腰痛、睡眠、疲労感、気分など"></textarea></div>
+      <div><label>できなかった理由・調整点</label><textarea id="habitBarrier" placeholder="例：忙しい、忘れた、痛みが出た、内容が多すぎたなど"></textarea></div>
+      <div><label>次週の修正</label><textarea id="habitNext" placeholder="例：続ける／減らす／内容を変える"></textarea></div>
+      <div><label>施術者コメント</label><textarea id="habitComment" placeholder="例：できた回数より、無理なく続けられたかを確認"></textarea></div>
+    </div>
+    <div class="mini-note">習慣は「できた・できない」で責めるものではなく、生活に合わせて調整するための材料として使います。</div>
+  </section>
+
+  <section class="card">
+    <div class="section-title"><h3>AI分析用プロンプト生成</h3><span class="badge">Step 9</span></div>
+    <p class="hint">下のボタンで、ChatGPT等に貼り付ける分析用プロンプトを生成します。姿勢写真は別途画像として添付してください。</p>
+    <div class="btns" style="position:static;background:transparent;border:0;padding:0;margin:0 0 12px"><button class="btn primary full" onclick="generatePrompt()">AI用プロンプトを生成</button></div>
+    <div id="promptOutput" class="output">ここにAI分析用プロンプトが表示されます。</div>
+  </section>
+</main>
+<div class="actions"><div class="wrap btns"><button class="btn secondary" onclick="calculateScores()">点数を更新</button><button class="btn secondary" onclick="generateReportDraft()">レポート作成</button><button class="btn secondary" onclick="window.print()">印刷 / PDF保存</button><button class="btn primary" onclick="copyPrompt()">プロンプトをコピー</button><button class="btn ghost" onclick="resetForm()">リセット</button></div></div>
+<footer class="wrap footer">YUSEI CONDITION prototype｜この試作品はローカル処理のみです。正式運用時は同意書・個人情報保護・保存方法を必ず整備してください。</footer>
+<script>
+const categories = [
+  {key:'body', name:'身体の状態', questions:['首や肩のこりを感じる','腰の重だるさや痛みを感じる','背中が張っている感じがある','頭痛や頭の重さを感じる','手足の冷えを感じる','むくみやすい','身体が硬くなっていると感じる','姿勢が悪くなっていると感じる','疲れが身体に残りやすい','痛みや違和感が日常生活に影響している']},
+  {key:'autonomic', name:'自律神経・内臓', questions:['寝つきが悪い','夜中に目が覚めやすい','朝起きても疲れが残っている','呼吸が浅いと感じる','動悸や胸のざわつきを感じることがある','胃もたれや食欲の乱れがある','便秘や下痢など、お腹の調子が乱れやすい','天気や気圧で体調が変わりやすい','汗をかきにくい、または汗をかきすぎる','リラックスしたくても身体の力が抜けにくい']},
+  {key:'mental', name:'心・メンタル', questions:['イライラしやすい','気分が落ち込みやすい','不安を感じやすい','やる気が出にくい','集中力が続きにくい','些細なことで疲れやすい','人と会うのが面倒に感じることがある','考えすぎてしまう','自分を責めてしまうことがある','気持ちの切り替えがうまくできない']},
+  {key:'lifestyle', name:'生活習慣', questions:['睡眠時間が不足している','就寝時間や起床時間が不規則である','食事の時間が不規則である','栄養バランスが乱れていると感じる','水分をあまり取れていない','運動不足を感じる','スマホやパソコンを見る時間が長い','休憩を取らずに頑張りすぎてしまう','入浴せずシャワーだけで済ませることが多い','自分の身体をケアする時間が少ない']},
+  {key:'environment', name:'仕事・家庭・環境', questions:['仕事や家事の負担が大きい','人間関係でストレスを感じる','忙しくて自分の時間が取れない','周囲に気を遣いすぎてしまう','休んでいても仕事や予定のことを考えてしまう','家庭や生活環境の中で落ち着けないことがある','悩みを相談できる相手が少ない','責任感が強く、無理をしやすい','気づくと予定を詰め込みすぎている','心から安心できる時間が少ない']},
+  {key:'recovery', name:'回復力・セルフケア', questions:['寝ても疲れが取れにくい','休んでも身体が回復しにくい','不調が出ても我慢してしまう','自分の疲れに気づきにくい','身体のサインを後回しにしやすい','セルフケアを続けるのが苦手である','調子が悪くなってから対処することが多い','自分に合った休み方がわからない','体調の波が大きい','今の生活を変えたいが、何から始めればいいかわからない']}
+];
+const redFlags = ['強い痛み','しびれ','発熱','息苦しさ','胸の痛み','急な体調変化','強いめまい','急激な体重変化','排尿・排便の異常','その他の不安な症状'];
+function el(id){return document.getElementById(id)}
+function makeQuestions(){
+  const root = el('questions');
+  root.innerHTML = '';
+  categories.forEach((cat, ci)=>{
+    const box = document.createElement('div'); box.className='card'; box.style.boxShadow='none';
+    box.innerHTML = `<div class="section-title"><h3>${ci+1}. ${cat.name}</h3><span class="badge">/40点</span></div>`;
+    cat.questions.forEach((q, qi)=>{
+      const name = `${cat.key}_${qi}`;
+      const div = document.createElement('div'); div.className='question';
+      div.innerHTML = `<div class="q-title">${qi+1}. ${q}</div><div class="scale">${[0,1,2,3,4].map(v=>`<label><input type="radio" name="${name}" value="${v}" onchange="calculateScores()"><span>${v}</span><small>${['全くない','たまに','時々','よく','いつも'][v]}</small></label>`).join('')}</div>`;
+      box.appendChild(div);
+    });
+    root.appendChild(box);
+  });
+}
+function makeRedFlags(){
+  const root = el('redFlags');
+  root.innerHTML = redFlags.map((r,i)=>`<label class="consent"><input type="checkbox" value="${r}" class="rf"><span>${r}</span></label>`).join('');
+}
+function scoreLevel(score){
+  if(score <= 9) return '低め：大きな負担は少なめ';
+  if(score <= 19) return '軽度：やや負担あり';
+  if(score <= 29) return '中等度：優先的に確認';
+  return '高め：慎重に確認';
+}
+function calculateScores(){
+  const scoreData = categories.map(cat=>{
+    let total=0, answered=0;
+    cat.questions.forEach((q, qi)=>{
+      const checked = document.querySelector(`input[name="${cat.key}_${qi}"]:checked`);
+      if(checked){total += Number(checked.value); answered++;}
+    });
+    return {...cat, total, answered};
+  });
+  el('scores').innerHTML = scoreData.map(s=>`<div class="score-card"><strong><span>${s.name}</span><span>${s.total}/40</span></strong><div class="bar"><span style="width:${(s.total/40)*100}%"></span></div><div class="level">${scoreLevel(s.total)}｜回答 ${s.answered}/10</div></div>`).join('');
+  const sorted = [...scoreData].sort((a,b)=>b.total-a.total).slice(0,3);
+  el('priority').innerHTML = sorted.map((s,i)=>`<span class="pill">優先${i+1}：${s.name} ${s.total}/40</span>`).join('');
+  return scoreData;
+}
+function values(){
+  const get = id => el(id) ? el(id).value : '';
+  return {
+    patientId:get('patientId'), date:get('date'), age:get('age'), sex:get('sex'),
+    mainConcern:get('mainConcern'), improve:get('improve'), ideal:get('ideal'), since:get('since'), worse:get('worse'), better:get('better'), expect:get('expect'), postureMemo:get('postureMemo'), redFlagNote:get('redFlagNote'),
+    practitionerAssessment:get('practitionerAssessment'), treatmentDirection:get('treatmentDirection'), cautionMemo:get('cautionMemo'), nextSessionPlan:get('nextSessionPlan'),
+    habitGoal:get('habitGoal'), habit1:get('habit1'), habit1Timing:get('habit1Timing'), habit2:get('habit2'), habit2Timing:get('habit2Timing'), habit3:get('habit3'), habit3Timing:get('habit3Timing'), habitChange:get('habitChange'), habitBarrier:get('habitBarrier'), habitNext:get('habitNext'), habitComment:get('habitComment'),
+    reportCurrent:get('reportCurrent'), reportScore:get('reportScore'), reportPosture:get('reportPosture'), reportSimulation:get('reportSimulation'), reportPriorityText:get('reportPriorityText'), reportTreatment:get('reportTreatment'), reportHabits:get('reportHabits'), reportGoal:get('reportGoal'), reportMessage:get('reportMessage'),
+    redFlags:[...document.querySelectorAll('.rf:checked')].map(x=>x.value)
+  }
+}
+
+function topScoreData(){
+  return calculateScores().sort((a,b)=>b.total-a.total);
+}
+function safeText(t){return (t || '').replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function habitLines(){
+  const v = values();
+  const items = [];
+  if(v.habit1) items.push(`1. ${v.habit1}${v.habit1Timing ? `（${v.habit1Timing}）` : ''}`);
+  if(v.habit2) items.push(`2. ${v.habit2}${v.habit2Timing ? `（${v.habit2Timing}）` : ''}`);
+  if(v.habit3) items.push(`3. ${v.habit3}${v.habit3Timing ? `（${v.habit3Timing}）` : ''}`);
+  return items.length ? items.join('\n') : '1. 今の状態に合わせて、1〜3個の小さな習慣から始めましょう。';
+}
+function defaultSimulation(top){
+  const names = top.slice(0,2).map(s=>s.name).join('・');
+  return `現在のチェックでは「${names || '身体の状態'}」の負担が目立ちます。今の生活習慣や姿勢の傾向が続くと、疲労感や不調が残りやすくなる可能性があります。\n\nまずは施術で身体の状態を整えながら、無理なく続けられるセルフケアと生活習慣を組み合わせて、変化を一緒に確認していきます。`;
+}
+function generateReportDraft(){
+  const scores = calculateScores();
+  const top = [...scores].sort((a,b)=>b.total-a.total);
+  const v = values();
+  const topText = top.slice(0,3).map((s,i)=>`優先${i+1}：${s.name}（${s.total}/40）`).join('\n');
+  const scoreComment = scores.map(s=>`・${s.name}：${s.total}/40点（${scoreLevel(s.total)}）`).join('\n');
+  const current = v.practitionerAssessment || `今回のチェックでは、${top[0].name}の負担が比較的高く出ています。${v.mainConcern ? `特に「${v.mainConcern}」について、日常生活や姿勢・習慣との関係を確認していきます。` : '身体の状態、生活習慣、姿勢の傾向を合わせて確認していきます。'}`;
+  const posture = v.postureMemo || '姿勢写真をもとに、頭の位置、肩の高さ、背中の丸まり、骨盤の傾き、左右差などを確認します。写真だけで断定せず、施術時の触診や動きと合わせて見ていきます。';
+  const treatment = v.treatmentDirection || '施術では、負担が出ている部分だけでなく、姿勢や生活習慣と関係しやすい首肩・背中・骨盤まわり・呼吸のしやすさなども確認しながら進めます。';
+  const goal = v.ideal || '次回までに、身体の変化と習慣の続けやすさを一緒に確認していきます。';
+  const msg = v.reportMessage || '無理に全部を変える必要はありません。まずはできることを小さく始めて、身体の変化を一緒に確認していきましょう。';
+  el('reportCurrent').value = current;
+  el('reportScore').value = scoreComment;
+  el('reportPosture').value = posture;
+  el('reportSimulation').value = defaultSimulation(top);
+  el('reportPriorityText').value = topText;
+  el('reportTreatment').value = treatment;
+  el('reportHabits').value = habitLines();
+  el('reportGoal').value = goal;
+  el('reportMessage').value = msg;
+  renderReport();
+  return reportText();
+}
+function reportText(){
+  const v = values();
+  return `患者さん用レポート\n${v.patientId ? `対象：${v.patientId}\n` : ''}${v.date ? `日付：${v.date}\n` : ''}\n【現在の状態まとめ】\n${v.reportCurrent || ''}\n\n【チェック結果】\n${v.reportScore || ''}\n\n【姿勢から見える傾向】\n${v.reportPosture || ''}\n\n【AI改善シミュレーション】\n${v.reportSimulation || ''}\n\n【優先して整えるポイント】\n${v.reportPriorityText || ''}\n\n【施術方針】\n${v.reportTreatment || ''}\n\n【今週の習慣プラン】\n${v.reportHabits || ''}\n\n【次回までの目標】\n${v.reportGoal || ''}\n\n【一言】\n${v.reportMessage || ''}`;
+}
+function renderReport(){
+  const v = values();
+  const blocks = [
+    ['現在の状態まとめ', v.reportCurrent],
+    ['チェック結果', v.reportScore],
+    ['姿勢から見える傾向', v.reportPosture],
+    ['AI改善シミュレーション', v.reportSimulation],
+    ['優先して整えるポイント', v.reportPriorityText],
+    ['施術方針', v.reportTreatment],
+    ['今週の習慣プラン', v.reportHabits],
+    ['次回までの目標', v.reportGoal],
+    ['一言', v.reportMessage]
+  ];
+  el('reportPaper').innerHTML = `<div class="report-head"><strong>患者さん用レポート</strong><div class="report-meta">${safeText(v.patientId || '管理番号未入力')}｜${safeText(v.date || '')}</div></div>` + blocks.map(([title,body])=>`<div class="report-block"><h4>${title}</h4>${safeText(body || '未入力')}</div>`).join('');
+}
+async function copyReport(){
+  const text = reportText().trim() ? reportText() : generateReportDraft();
+  try{await navigator.clipboard.writeText(text); alert('レポートをコピーしました');}catch(e){alert('コピーできませんでした。長押しで選択してコピーしてください。')}
+}
+
+function generatePrompt(){
+  const scores = calculateScores();
+  const v = values();
+  const prompt = `# AIコンディション分析依頼\n\nあなたは、鍼灸・マッサージ施術者の補助として、患者さんのセルフチェック結果と姿勢写真を整理するAIです。\n病気の診断、治療方針の断定、未来の状態の断定は行わず、施術者が状態を把握し、患者さんに説明するための参考情報としてまとめてください。\n\n## 基本情報\n管理番号・ニックネーム：${v.patientId || '未入力'}\n記入日：${v.date || '未入力'}\n年齢：${v.age || '未入力'}\n性別：${v.sex || '未入力'}\n\n## セルフチェック点数\n${scores.map(s=>`・${s.name}：${s.total}/40点（回答 ${s.answered}/10）`).join('\n')}\n\n## 自由記述\n一番気になっている症状や不調：\n${v.mainConcern || '未入力'}\n\n改善したいこと・よくしたいこと：\n${v.improve || '未入力'}\n\nもっと良くしたいこと・理想の状態：\n${v.ideal || '未入力'}\n\nいつ頃から：\n${v.since || '未入力'}\n\n悪化しやすいタイミング：\n${v.worse || '未入力'}\n\n楽になるタイミング：\n${v.better || '未入力'}\n\n期待していること：\n${v.expect || '未入力'}\n\n## 安全確認\n該当項目：${v.redFlags.length ? v.redFlags.join('、') : 'なし・未選択'}\n補足：${v.redFlagNote || 'なし'}\n\n## 姿勢写真\n正面・横向き・後ろの写真を別途添付します。\n施術者メモ：\n${v.postureMemo || '未入力'}\n\n## 施術者側の追加メモ\n見立て・状態整理：\n${v.practitionerAssessment || '未入力'}\n\n施術方針メモ：\n${v.treatmentDirection || '未入力'}\n\n注意点：\n${v.cautionMemo || '未入力'}\n\n次回確認すること：\n${v.nextSessionPlan || '未入力'}\n\n## 習慣プラン候補\n目的：${v.habitGoal || '未入力'}\n${habitLines()}\n\n## 出力してほしい内容\n### 1. セルフチェック表の読み取り結果\n6カテゴリごとの点数と、負担が強そうなカテゴリを整理してください。\n\n### 2. 自由記述の要約\n患者さんが気にしていること、改善したいこと、もっと良くしたいことを要約してください。\n\n### 3. 現在の状態まとめ\n専門用語を使いすぎず、身体・心・生活習慣の傾向をわかりやすく整理してください。\n\n### 4. 姿勢写真から見える傾向\n頭の位置、肩の高さ、巻き肩、猫背、反り腰、骨盤の傾き、左右差、膝や足の向き、重心の傾向を確認してください。写真だけで断定せず「〜の傾向」「〜の可能性」という表現にしてください。\n\n### 5. 不調につながりやすい要因\nセルフチェック、自由記述、姿勢写真から、不調につながっている可能性がある要因を整理してください。\n\n### 6. AI改善シミュレーション\n現在の生活習慣や姿勢の傾向が続いた場合に負担が残りやすい部分と、施術・セルフケア・習慣改善を行った場合に変化が出やすそうな部分を説明してください。未来は断定しないでください。\n\n### 7. 優先して整えるポイント\n最初に整えるべきポイントを3つ以内で提案してください。\n\n### 8. 施術方針の参考\n鍼灸・マッサージ・ストレッチ・運動指導を考えるうえで参考になる方向性をまとめてください。\n\n### 9. 今週の習慣プラン\n患者さんが無理なく実践できる習慣を1〜3個だけ提案してください。1回1〜5分程度、継続しやすく、症状を悪化させにくいものにしてください。\n\n### 10. 患者さん向け説明文\nやさしく安心感のある文章で、不安を煽らず、前向きで伴走型の表現にしてください。\n\n### 11. 注意が必要な点\n強い痛み、しびれ、発熱、息苦しさ、胸の痛み、急な体調変化などがある場合は、医療機関への相談が必要であることを明記してください。`;
+  el('promptOutput').textContent = prompt;
+  return prompt;
+}
+async function copyPrompt(){
+  const text = el('promptOutput').textContent.includes('ここに') ? generatePrompt() : el('promptOutput').textContent;
+  try{await navigator.clipboard.writeText(text); alert('プロンプトをコピーしました');}catch(e){alert('コピーできませんでした。長押しで選択してコピーしてください。')}
+}
+function resetForm(){ if(confirm('入力内容をリセットしますか？')){document.querySelectorAll('input, textarea, select').forEach(x=>{ if(x.type==='radio'||x.type==='checkbox') x.checked=false; else x.value='';}); document.querySelectorAll('.preview').forEach(p=>p.innerHTML='画像プレビュー'); calculateScores(); el('promptOutput').textContent='ここにAI分析用プロンプトが表示されます。'; el('reportPaper').innerHTML='<div class="report-head"><strong>患者さん用レポート</strong><div class="report-meta">レポート下書きを作成すると、ここに表示されます。</div></div><div class="report-block">未作成</div>';}}
+function setupUploads(){document.querySelectorAll('input[type="file"]').forEach(input=>{input.addEventListener('change', e=>{const file=e.target.files[0]; const target=el(e.target.dataset.preview); if(!file){target.textContent='画像プレビュー';return;} const reader=new FileReader(); reader.onload=()=>{target.innerHTML=`<img src="${reader.result}" alt="preview">`}; reader.readAsDataURL(file);});});}
+makeQuestions(); makeRedFlags(); setupUploads(); calculateScores(); el('date').value = new Date().toLocaleDateString('ja-JP'); document.querySelectorAll('#reportCurrent,#reportScore,#reportPosture,#reportSimulation,#reportPriorityText,#reportTreatment,#reportHabits,#reportGoal,#reportMessage').forEach(x=>x.addEventListener('input', renderReport));
+</script>
+</body>
+</html>
