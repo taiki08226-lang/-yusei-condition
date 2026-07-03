@@ -1,0 +1,960 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6f8f72">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="YUSEI CONDITION">
+<title>YUSEI CONDITION v19</title>
+<style>
+:root{--bg:#f7f5ef;--card:#fff;--ink:#253127;--muted:#687166;--main:#6f8f72;--main2:#e8efe5;--line:#ddd8ce;--warn:#a14e3a;--soft:#fbfaf7;}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;line-height:1.65;font-size:15px;}
+header{position:sticky;top:0;z-index:10;background:rgba(247,245,239,.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:12px 12px 8px;}
+h1{font-size:19px;margin:0 0 2px}.sub{font-size:12px;color:var(--muted);margin:0}
+nav{display:flex;gap:6px;overflow:auto;padding:10px 0 2px}nav a{white-space:nowrap;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font-size:13px}
+main{padding:14px;max-width:980px;margin:0 auto 40px}
+.page{display:none}#start{display:block}.page:target{display:block}body:has(#consent:target) #start,body:has(#check:target) #start,body:has(#patient:target) #start,body:has(#plan:target) #start,body:has(#practitioner:target) #start,body:has(#share:target) #start{display:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:0 0 14px;box-shadow:0 2px 10px rgba(40,40,30,.04)}
+h2{font-size:22px;margin:0 0 10px}h3{font-size:16px;margin:18px 0 8px}.catTitle{background:var(--main2);padding:8px 10px;border-radius:12px;margin-top:22px}
+label{display:block;font-weight:600;margin:10px 0 4px}input[type="text"],input[type="date"],textarea,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;background:#fff;font-size:16px;color:var(--ink)}textarea{min-height:100px;resize:vertical}
+.grid{display:grid;grid-template-columns:1fr;gap:10px}@media(min-width:720px){.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:1fr 1fr 1fr}}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.btn,.ghost,button.btn,button.ghost{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:14px;padding:12px 14px;font-weight:700;font-size:15px;min-height:44px;border:1px solid var(--main);cursor:pointer}
+.btn{background:var(--main);color:#fff}.ghost{background:#fff;color:var(--main)}.mini{font-size:12px;color:var(--muted)}.warn{color:var(--warn);font-weight:700}.pill{display:inline-block;background:var(--main2);border-radius:999px;padding:4px 9px;font-size:12px;margin:2px}
+.q{padding:11px 0;border-bottom:1px solid #eee}.qtext{font-weight:600;margin-bottom:6px}.qtext span{display:inline-grid;place-items:center;background:var(--main2);border-radius:999px;min-width:24px;height:24px;margin-right:8px;font-size:12px}
+.scale{display:flex;gap:6px;flex-wrap:wrap}.scaleItem{display:inline-flex;gap:4px;align-items:center;margin:0;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-weight:500}
+.scorebox{display:grid;grid-template-columns:1fr 90px;gap:8px;align-items:center;border-bottom:1px solid var(--line);padding:8px 0}.score{font-size:20px;font-weight:800;text-align:right}.photoPreview{max-width:100%;border-radius:12px;border:1px solid var(--line);margin-top:8px;display:none}
+.output{white-space:pre-wrap;background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:12px;min-height:120px;font-size:14px}.stickyBottom{position:sticky;bottom:0;background:rgba(247,245,239,.96);padding:10px 0;border-top:1px solid var(--line)}.dangerlist li{margin-bottom:4px}
+.calControls{display:grid;grid-template-columns:1fr;gap:10px;margin:8px 0 12px}.calendarWrap{display:grid;grid-template-columns:1fr;gap:14px}.calendarBlock{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:12px}.calendarBlock h4{margin:0 0 8px;font-size:16px}.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.calHead{font-size:11px;text-align:center;color:var(--muted);font-weight:700}.calDay{min-height:54px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:5px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;font-size:12px;font-weight:700}.calDay.empty{background:transparent;border:none}.calDay input{align-self:flex-end;transform:scale(1.15)}.calSummary{margin-top:10px;font-size:13px;color:var(--muted);white-space:pre-wrap}.monthTitle{display:flex;justify-content:space-between;gap:8px;align-items:center}.monthTitle span{font-size:12px;color:var(--muted)}.loginBox{background:linear-gradient(135deg,#ffffff,#eef5eb);border:1px solid var(--line);border-radius:20px;padding:18px}.loginStatus{font-weight:700;color:var(--main);margin-top:8px}.lockNote{background:#fff7ed;border:1px solid #f1d4b8;border-radius:14px;padding:10px;color:#7a4a20;font-size:13px}
+
+/* v16 readability */
+details.guide, details.qGroup{border:1px solid var(--line);border-radius:14px;background:#fff;margin:10px 0;padding:0;overflow:hidden}
+details.guide summary, details.qGroup summary{list-style:none;cursor:pointer;font-weight:800;padding:12px 14px;background:var(--main2);color:var(--ink)}
+details.guide summary::-webkit-details-marker, details.qGroup summary::-webkit-details-marker{display:none}
+details.guide summary:after, details.qGroup summary:after{content:'開く';float:right;font-size:12px;color:var(--main);font-weight:700}
+details.guide[open] summary:after, details.qGroup[open] summary:after{content:'閉じる'}
+details.guide .inside, details.qGroup .inside{padding:12px 14px}
+details.qGroup .q{padding-left:12px;padding-right:12px}
+.readabilityBox{background:#fff;border-left:5px solid var(--main);border-radius:14px;padding:12px;margin:10px 0}
+.autosave{font-size:11px;color:var(--muted);margin-top:4px}
+
+
+/* v17 AI answer transfer / concise UI */
+.aiPasteBox{background:#f4f8f1;border:1px solid #cfdcc9;border-radius:16px;padding:12px;margin-top:10px}
+.statusOk{color:var(--main);font-weight:800}
+.shortGuide{background:#fffef9;border:1px dashed var(--main);border-radius:14px;padding:10px;font-size:13px;color:var(--muted)}
+.fieldHint{font-size:12px;color:var(--muted);margin-top:2px}
+
+
+/* v18 simple operation / onboarding / check */
+.stepBox{display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:start;border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px;margin:10px 0}
+.stepNo{display:grid;place-items:center;width:32px;height:32px;border-radius:999px;background:var(--main);color:#fff;font-weight:900}
+.noticeLine{display:none;background:#fff3e6;border:1px solid #edc28a;border-radius:14px;padding:12px;color:#73420c;font-weight:700}
+.simpleAction{background:linear-gradient(135deg,#ffffff,#eef5eb);border:1px solid #cfdcc9;border-radius:18px;padding:14px;margin:10px 0}
+.bigBtn{width:100%;font-size:17px;padding:15px 16px}
+.lengthOk{color:var(--main);font-weight:800}.lengthWarn{color:var(--warn);font-weight:800}
+.checkList{display:grid;gap:7px}.checkItem{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #eee;padding:7px 0}.checkPass{color:var(--main);font-weight:900}.checkFail{color:var(--warn);font-weight:900}
+details.backupTools{border:1px dashed var(--line);border-radius:14px;background:#fff;margin:12px 0;padding:0;overflow:hidden}
+details.backupTools summary{cursor:pointer;padding:12px 14px;font-weight:800;background:#faf7ee}details.backupTools .inside{padding:12px 14px}
+
+@media print{header,nav,.stickyBottom,.btnrow{display:none!important}.page{display:block!important}body{background:#fff}.card{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<header>
+  <h1>YUSEI CONDITION</h1>
+  <p class="sub">AIコンディションチェック｜同意・チェック・改善案・施術者用・実運用シンプル版 v19</p>
+  <p class="autosave" id="autoSaveStatus">自動保存：準備中</p>
+  <nav><a href="#start">初回案内</a><a href="#consent">同意</a><a href="#check">入力</a><a href="#plan">改善案</a><a href="#practitioner">施術者</a><a href="#share">送信・返送</a></nav>
+</header>
+<main>
+<section id="start" class="page">
+  <div class="card">
+    <h2>はじめての方へ</h2>
+    <p class="pill">初回だけの準備</p>
+    <p>このページは、コンディションチェックを入力し、施術者へ共有するためのページです。次回から開きやすいように、最初にホーム画面へ追加しておくのがおすすめです。</p>
+    <div id="lineBrowserNotice" class="noticeLine">LINE内ブラウザで開いている可能性があります。iPhoneの場合は、右下または右上のメニューから「Safariで開く」を選んでからホーム画面に追加してください。</div>
+    <div class="stepBox"><div class="stepNo">1</div><div><strong>URLをSafariで開く</strong><br><span class="mini">LINEから開いた場合は、Safariで開き直すと保存やホーム画面追加が安定しやすいです。</span></div></div>
+    <div class="stepBox"><div class="stepNo">2</div><div><strong>共有ボタンを押す</strong><br><span class="mini">iPhoneの画面下、または上部にある共有マークを押します。</span></div></div>
+    <div class="stepBox"><div class="stepNo">3</div><div><strong>「ホーム画面に追加」を選ぶ</strong><br><span class="mini">名前は「優星チェック」など、分かりやすい名前でOKです。</span></div></div>
+    <div class="stepBox"><div class="stepNo">4</div><div><strong>入力を開始する</strong><br><span class="mini">途中で戻っても、同じ端末・同じブラウザなら自動保存されます。</span></div></div>
+    <label><input type="checkbox" id="skipGuideChk"> 次回からこの案内を表示しない</label>
+    <div class="btnrow"><button class="btn bigBtn" id="startDoneBtn" type="button">準備できたので同意へ進む</button><a class="ghost" href="#consent">ホーム画面追加せずに進む</a></div>
+  </div>
+  <div class="card">
+    <h3>共有について</h3>
+    <p>入力後は、<strong>「大樹さんに送る」</strong>ボタンでURLを作成し、LINEで送ります。写真はURLに含めず、同意のうえでLINEに別送してください。</p>
+    <p class="mini warn">URLを知っている人は内容を読み込める可能性があります。氏名・住所・電話番号は入れず、管理番号やニックネームで運用してください。</p>
+  </div>
+</section>
+
+<section id="consent" class="page">
+  <div class="card">
+    <h2>同意書・確認事項</h2><p class="pill" id="activePatientPill">管理番号：未入力</p>
+    <p>このチェックは、病気の診断や治療方針の決定を目的としたものではありません。身体・心・生活習慣・姿勢の状態を整理し、施術やセルフケアの参考にするためのものです。</p>
+    <div class="readabilityBox"><strong>入力の流れ</strong><br>①同意確認 → ②チェック入力 → ③共有URL作成 → ④施術者が改善案を記入 → ⑤返信URLで確認、の順番で進めます。</div>
+    <details class="guide"><summary>AI利用・写真・個人情報について詳しく確認する</summary><div class="inside">
+      <h3>AI利用について</h3>
+      <p>AIは回答内容や姿勢写真をもとに、状態整理・改善案の下書きを作成します。最終的な判断と説明は施術者が行います。</p>
+      <h3>AIへの写真・記入内容の転記について</h3>
+      <p>AI分析を行う際、セルフチェック表・自由記述・姿勢写真を、個人が特定されにくい形に加工したうえで、ChatGPT等のAIサービスへ入力・転記する場合があります。</p>
+      <p class="mini">氏名、住所、電話番号など、分析に不要な個人情報は原則として入力しません。姿勢写真は、顔が写らない形、または顔を隠した形で使用します。</p>
+      <p class="mini warn">ただし撮影状況によって顔が写る場合があります。その場合も、本人同意を得たうえでAI分析に使用し、第三者への公開は行いません。</p>
+      <h3>姿勢写真について</h3>
+      <p>姿勢確認のため、正面・横・後ろの写真を使用する場合があります。写真だけで身体の状態を断定せず、施術者の確認と合わせて参考情報として扱います。</p>
+      <h3>個人情報・健康情報について</h3>
+      <p>ご記入いただいた内容は、施術・セルフケア・生活習慣サポートの目的で使用します。第三者に無断で公開することはありません。</p>
+    </div></details>
+    <details class="guide"><summary>医療機関への相談目安を確認する</summary><div class="inside">
+      <ul class="dangerlist"><li>強い痛み、しびれ、麻痺</li><li>発熱、息苦しさ、胸の痛み</li><li>急な体調変化、強いめまい</li><li>急激な体重変化、排尿・排便異常</li><li>強い不安、抑うつ、自傷念慮</li></ul>
+    </div></details>
+    <label><input type="checkbox" id="agree1"> 上記内容を確認しました</label>
+    <label><input type="checkbox" id="agree2"> AI分析が診断ではなく補助であることを理解しました</label>
+    <label><input type="checkbox" id="agree3"> セルフチェック表・自由記述・姿勢写真を、個人が特定されにくい形でAIサービスへ入力・転記することに同意します</label>
+    <label><input type="checkbox" id="agree4"> 姿勢写真に顔が写ってしまう場合があること、顔が写る写真をAI分析に使用する可能性があることに同意します</label>
+    <div class="grid two"><div><label>署名</label><input id="signature" type="text" placeholder="例：患者様氏名または管理番号"></div><div><label>日付</label><input id="consentDate" type="date"></div></div>
+    <div class="btnrow"><a class="btn" href="#check">チェックへ進む</a></div>
+  </div>
+</section>
+
+<section id="check" class="page">
+  <div class="card"><h2>チェックページ</h2><p>基本情報・目的・60問チェック・自由記述・姿勢写真・安全確認を入力します。</p><div class="readabilityBox"><strong>読みやすくするため、質問はカテゴリごとに開閉式にしました。</strong><br>まずは上から順番に、開いているカテゴリから入力してください。途中で戻っても自動保存されます。</div></div>
+  <div class="card">
+    <h3>基本情報</h3>
+    <div class="grid three"><div><label>管理番号・ニックネーム</label><input id="pid" type="text" placeholder="例：001／ハナデカピタ"></div><div><label>年代</label><input id="age" type="text" placeholder="例：40代"></div><div><label>性別</label><select id="sex"><option value="">選択</option><option>男性</option><option>女性</option><option>その他／未回答</option></select></div></div>
+    <label>今回の目的（複数選択可）</label>
+    <div class="grid two">
+      <label><input class="goal" type="checkbox" value="不調改善"> 不調改善</label><label><input class="goal" type="checkbox" value="姿勢改善"> 姿勢改善</label><label><input class="goal" type="checkbox" value="ダイエット・体型改善"> ダイエット・体型改善</label><label><input class="goal" type="checkbox" value="体力改善"> 体力改善</label><label><input class="goal" type="checkbox" value="睡眠・自律神経改善"> 睡眠・自律神経改善</label><label><input class="goal" type="checkbox" value="メンタル・ストレスケア"> メンタル・ストレスケア</label>
+    </div>
+    <label>主訴・一番気になること</label><textarea id="mainConcern" placeholder="例：首肩こり、腰痛、姿勢、体重、睡眠など"></textarea>
+  </div>
+  <div class="card">
+    <h3>セルフチェック 0〜4点</h3>
+    <p class="mini">0：全くない／1：たまに／2：時々／3：よくある／4：いつも・強く当てはまる</p>
+    <details class="qGroup" open><summary>身体の状態</summary><div class="inside">
+<div class="q"><div class="qtext"><span>1</span>首や肩のこりを感じる</div><div class="scale"><label class="scaleItem"><input type="radio" name="q0" value="0" data-cat="身体の状態">0</label><label class="scaleItem"><input type="radio" name="q0" value="1" data-cat="身体の状態">1</label><label class="scaleItem"><input type="radio" name="q0" value="2" data-cat="身体の状態">2</label><label class="scaleItem"><input type="radio" name="q0" value="3" data-cat="身体の状態">3</label><label class="scaleItem"><input type="radio" name="q0" value="4" data-cat="身体の状態">4</label></div></div>
+<div class="q"><div class="qtext"><span>2</span>腰の重だるさや痛みを感じる</div><div class="scale"><label class="scaleItem"><input type="radio" name="q1" value="0" data-cat="身体の状態">0</label><label class="scaleItem"><input type="radio" name="q1" value="1" data-cat="身体の状態">1</label><label class="scaleItem"><input type="radio" name="q1" value="2" data-cat="身体の状態">2</label><label class="scaleItem"><input type="radio" name="q1" value="3" data-cat="身体の状態">3</label><label class="scaleItem"><input type="radio" name="q1" value="4" data-cat="身体の状態">4</label></div></div>
+<div class="q"><div class="qtext"><span>3</span>背中が張っている感じがある</div><div class="scale"><label class="scaleItem"><input type="radio" name="q2" value="0" data-cat="身体の状態">0</label><label class="scaleItem"><input type="radio" name="q2" value="1" data-cat="身体の状態">1</label><label class="scaleItem"><input type="radio" name="q2" value="2" data-cat="身体の状態">2</label><label class="scaleItem"><input type="radio" name="q2" value="3" data-cat="身体の状態">3</label><label class="scaleItem"><input type="radio" name="q2" value="4" data-cat="身体の状態">4</label></div></div>
+<div class="q"><div class="qtext"><span>4</span>頭痛や頭の重さを感じる</div><div class="scale"><label class="scaleItem"><input type="radio" name="q3" value="0" data-cat="身体の状態">0</label><label class="scaleItem"><input type="radio" name="q3" value="1" data-cat="身体の状態">1</label><label class="scaleItem"><input type="radio" name="q3" value="2" data-cat="身体の状態">2</label><label class="scaleItem"><input type="radio" name="q3" value="3" data-cat="身体の状態">3</label><label class="scaleItem"><input type="radio" name="q3" value="4" data-cat="身体の状態">4</label></div></div>
+<div class="q"><div class="qtext"><span>5</span>手足の冷えを感じる</div><div class="scale"><label class="scaleItem"><input type="radio" name="q4" value="0" data-cat="身体の状態">0</label><label class="scaleItem"><input type="radio" name="q4" value="1" data-cat="身体の状態">1</label><label class="scaleItem"><input type="radio" name="q4" value="2" data-cat="身体の状態">2</label><label class="scaleItem"><input type="radio" name="q4" value="3" data-cat="身体の状態">3</label><label class="scaleItem"><input type="radio" name="q4" value="4" data-cat="身体の状態">4</label></div></div>
+<div class="q"><div class="qtext"><span>6</span>むくみやすい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q5" value="0" data-cat="身体の状態">0</label><label class="scaleItem"><input type="radio" name="q5" value="1" data-cat="身体の状態">1</label><label class="scaleItem"><input type="radio" name="q5" value="2" data-cat="身体の状態">2</label><label class="scaleItem"><input type="radio" name="q5" value="3" data-cat="身体の状態">3</label><label class="scaleItem"><input type="radio" name="q5" value="4" data-cat="身体の状態">4</label></div></div>
+<div class="q"><div class="qtext"><span>7</span>身体が硬くなっていると感じる</div><div class="scale"><label class="scaleItem"><input type="radio" name="q6" value="0" data-cat="身体の状態">0</label><label class="scaleItem"><input type="radio" name="q6" value="1" data-cat="身体の状態">1</label><label class="scaleItem"><input type="radio" name="q6" value="2" data-cat="身体の状態">2</label><label class="scaleItem"><input type="radio" name="q6" value="3" data-cat="身体の状態">3</label><label class="scaleItem"><input type="radio" name="q6" value="4" data-cat="身体の状態">4</label></div></div>
+<div class="q"><div class="qtext"><span>8</span>姿勢が悪くなっていると感じる</div><div class="scale"><label class="scaleItem"><input type="radio" name="q7" value="0" data-cat="身体の状態">0</label><label class="scaleItem"><input type="radio" name="q7" value="1" data-cat="身体の状態">1</label><label class="scaleItem"><input type="radio" name="q7" value="2" data-cat="身体の状態">2</label><label class="scaleItem"><input type="radio" name="q7" value="3" data-cat="身体の状態">3</label><label class="scaleItem"><input type="radio" name="q7" value="4" data-cat="身体の状態">4</label></div></div>
+<div class="q"><div class="qtext"><span>9</span>疲れが身体に残りやすい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q8" value="0" data-cat="身体の状態">0</label><label class="scaleItem"><input type="radio" name="q8" value="1" data-cat="身体の状態">1</label><label class="scaleItem"><input type="radio" name="q8" value="2" data-cat="身体の状態">2</label><label class="scaleItem"><input type="radio" name="q8" value="3" data-cat="身体の状態">3</label><label class="scaleItem"><input type="radio" name="q8" value="4" data-cat="身体の状態">4</label></div></div>
+<div class="q"><div class="qtext"><span>10</span>痛みや違和感が日常生活に影響している</div><div class="scale"><label class="scaleItem"><input type="radio" name="q9" value="0" data-cat="身体の状態">0</label><label class="scaleItem"><input type="radio" name="q9" value="1" data-cat="身体の状態">1</label><label class="scaleItem"><input type="radio" name="q9" value="2" data-cat="身体の状態">2</label><label class="scaleItem"><input type="radio" name="q9" value="3" data-cat="身体の状態">3</label><label class="scaleItem"><input type="radio" name="q9" value="4" data-cat="身体の状態">4</label></div></div>
+</div></details>
+<details class="qGroup"><summary>自律神経・内臓</summary><div class="inside">
+<div class="q"><div class="qtext"><span>1</span>寝つきが悪い</div><div class="scale"><label class="scaleItem"><input type="radio" name="q10" value="0" data-cat="自律神経・内臓">0</label><label class="scaleItem"><input type="radio" name="q10" value="1" data-cat="自律神経・内臓">1</label><label class="scaleItem"><input type="radio" name="q10" value="2" data-cat="自律神経・内臓">2</label><label class="scaleItem"><input type="radio" name="q10" value="3" data-cat="自律神経・内臓">3</label><label class="scaleItem"><input type="radio" name="q10" value="4" data-cat="自律神経・内臓">4</label></div></div>
+<div class="q"><div class="qtext"><span>2</span>夜中に目が覚めやすい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q11" value="0" data-cat="自律神経・内臓">0</label><label class="scaleItem"><input type="radio" name="q11" value="1" data-cat="自律神経・内臓">1</label><label class="scaleItem"><input type="radio" name="q11" value="2" data-cat="自律神経・内臓">2</label><label class="scaleItem"><input type="radio" name="q11" value="3" data-cat="自律神経・内臓">3</label><label class="scaleItem"><input type="radio" name="q11" value="4" data-cat="自律神経・内臓">4</label></div></div>
+<div class="q"><div class="qtext"><span>3</span>朝起きても疲れが残っている</div><div class="scale"><label class="scaleItem"><input type="radio" name="q12" value="0" data-cat="自律神経・内臓">0</label><label class="scaleItem"><input type="radio" name="q12" value="1" data-cat="自律神経・内臓">1</label><label class="scaleItem"><input type="radio" name="q12" value="2" data-cat="自律神経・内臓">2</label><label class="scaleItem"><input type="radio" name="q12" value="3" data-cat="自律神経・内臓">3</label><label class="scaleItem"><input type="radio" name="q12" value="4" data-cat="自律神経・内臓">4</label></div></div>
+<div class="q"><div class="qtext"><span>4</span>呼吸が浅いと感じる</div><div class="scale"><label class="scaleItem"><input type="radio" name="q13" value="0" data-cat="自律神経・内臓">0</label><label class="scaleItem"><input type="radio" name="q13" value="1" data-cat="自律神経・内臓">1</label><label class="scaleItem"><input type="radio" name="q13" value="2" data-cat="自律神経・内臓">2</label><label class="scaleItem"><input type="radio" name="q13" value="3" data-cat="自律神経・内臓">3</label><label class="scaleItem"><input type="radio" name="q13" value="4" data-cat="自律神経・内臓">4</label></div></div>
+<div class="q"><div class="qtext"><span>5</span>動悸や胸のざわつきを感じることがある</div><div class="scale"><label class="scaleItem"><input type="radio" name="q14" value="0" data-cat="自律神経・内臓">0</label><label class="scaleItem"><input type="radio" name="q14" value="1" data-cat="自律神経・内臓">1</label><label class="scaleItem"><input type="radio" name="q14" value="2" data-cat="自律神経・内臓">2</label><label class="scaleItem"><input type="radio" name="q14" value="3" data-cat="自律神経・内臓">3</label><label class="scaleItem"><input type="radio" name="q14" value="4" data-cat="自律神経・内臓">4</label></div></div>
+<div class="q"><div class="qtext"><span>6</span>胃もたれや食欲の乱れがある</div><div class="scale"><label class="scaleItem"><input type="radio" name="q15" value="0" data-cat="自律神経・内臓">0</label><label class="scaleItem"><input type="radio" name="q15" value="1" data-cat="自律神経・内臓">1</label><label class="scaleItem"><input type="radio" name="q15" value="2" data-cat="自律神経・内臓">2</label><label class="scaleItem"><input type="radio" name="q15" value="3" data-cat="自律神経・内臓">3</label><label class="scaleItem"><input type="radio" name="q15" value="4" data-cat="自律神経・内臓">4</label></div></div>
+<div class="q"><div class="qtext"><span>7</span>便秘や下痢など、お腹の調子が乱れやすい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q16" value="0" data-cat="自律神経・内臓">0</label><label class="scaleItem"><input type="radio" name="q16" value="1" data-cat="自律神経・内臓">1</label><label class="scaleItem"><input type="radio" name="q16" value="2" data-cat="自律神経・内臓">2</label><label class="scaleItem"><input type="radio" name="q16" value="3" data-cat="自律神経・内臓">3</label><label class="scaleItem"><input type="radio" name="q16" value="4" data-cat="自律神経・内臓">4</label></div></div>
+<div class="q"><div class="qtext"><span>8</span>天気や気圧で体調が変わりやすい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q17" value="0" data-cat="自律神経・内臓">0</label><label class="scaleItem"><input type="radio" name="q17" value="1" data-cat="自律神経・内臓">1</label><label class="scaleItem"><input type="radio" name="q17" value="2" data-cat="自律神経・内臓">2</label><label class="scaleItem"><input type="radio" name="q17" value="3" data-cat="自律神経・内臓">3</label><label class="scaleItem"><input type="radio" name="q17" value="4" data-cat="自律神経・内臓">4</label></div></div>
+<div class="q"><div class="qtext"><span>9</span>汗をかきにくい、または汗をかきすぎる</div><div class="scale"><label class="scaleItem"><input type="radio" name="q18" value="0" data-cat="自律神経・内臓">0</label><label class="scaleItem"><input type="radio" name="q18" value="1" data-cat="自律神経・内臓">1</label><label class="scaleItem"><input type="radio" name="q18" value="2" data-cat="自律神経・内臓">2</label><label class="scaleItem"><input type="radio" name="q18" value="3" data-cat="自律神経・内臓">3</label><label class="scaleItem"><input type="radio" name="q18" value="4" data-cat="自律神経・内臓">4</label></div></div>
+<div class="q"><div class="qtext"><span>10</span>リラックスしたくても身体の力が抜けにくい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q19" value="0" data-cat="自律神経・内臓">0</label><label class="scaleItem"><input type="radio" name="q19" value="1" data-cat="自律神経・内臓">1</label><label class="scaleItem"><input type="radio" name="q19" value="2" data-cat="自律神経・内臓">2</label><label class="scaleItem"><input type="radio" name="q19" value="3" data-cat="自律神経・内臓">3</label><label class="scaleItem"><input type="radio" name="q19" value="4" data-cat="自律神経・内臓">4</label></div></div>
+</div></details>
+<details class="qGroup"><summary>心・メンタル</summary><div class="inside">
+<div class="q"><div class="qtext"><span>1</span>イライラしやすい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q20" value="0" data-cat="心・メンタル">0</label><label class="scaleItem"><input type="radio" name="q20" value="1" data-cat="心・メンタル">1</label><label class="scaleItem"><input type="radio" name="q20" value="2" data-cat="心・メンタル">2</label><label class="scaleItem"><input type="radio" name="q20" value="3" data-cat="心・メンタル">3</label><label class="scaleItem"><input type="radio" name="q20" value="4" data-cat="心・メンタル">4</label></div></div>
+<div class="q"><div class="qtext"><span>2</span>気分が落ち込みやすい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q21" value="0" data-cat="心・メンタル">0</label><label class="scaleItem"><input type="radio" name="q21" value="1" data-cat="心・メンタル">1</label><label class="scaleItem"><input type="radio" name="q21" value="2" data-cat="心・メンタル">2</label><label class="scaleItem"><input type="radio" name="q21" value="3" data-cat="心・メンタル">3</label><label class="scaleItem"><input type="radio" name="q21" value="4" data-cat="心・メンタル">4</label></div></div>
+<div class="q"><div class="qtext"><span>3</span>不安を感じやすい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q22" value="0" data-cat="心・メンタル">0</label><label class="scaleItem"><input type="radio" name="q22" value="1" data-cat="心・メンタル">1</label><label class="scaleItem"><input type="radio" name="q22" value="2" data-cat="心・メンタル">2</label><label class="scaleItem"><input type="radio" name="q22" value="3" data-cat="心・メンタル">3</label><label class="scaleItem"><input type="radio" name="q22" value="4" data-cat="心・メンタル">4</label></div></div>
+<div class="q"><div class="qtext"><span>4</span>やる気が出にくい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q23" value="0" data-cat="心・メンタル">0</label><label class="scaleItem"><input type="radio" name="q23" value="1" data-cat="心・メンタル">1</label><label class="scaleItem"><input type="radio" name="q23" value="2" data-cat="心・メンタル">2</label><label class="scaleItem"><input type="radio" name="q23" value="3" data-cat="心・メンタル">3</label><label class="scaleItem"><input type="radio" name="q23" value="4" data-cat="心・メンタル">4</label></div></div>
+<div class="q"><div class="qtext"><span>5</span>集中力が続きにくい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q24" value="0" data-cat="心・メンタル">0</label><label class="scaleItem"><input type="radio" name="q24" value="1" data-cat="心・メンタル">1</label><label class="scaleItem"><input type="radio" name="q24" value="2" data-cat="心・メンタル">2</label><label class="scaleItem"><input type="radio" name="q24" value="3" data-cat="心・メンタル">3</label><label class="scaleItem"><input type="radio" name="q24" value="4" data-cat="心・メンタル">4</label></div></div>
+<div class="q"><div class="qtext"><span>6</span>些細なことで疲れやすい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q25" value="0" data-cat="心・メンタル">0</label><label class="scaleItem"><input type="radio" name="q25" value="1" data-cat="心・メンタル">1</label><label class="scaleItem"><input type="radio" name="q25" value="2" data-cat="心・メンタル">2</label><label class="scaleItem"><input type="radio" name="q25" value="3" data-cat="心・メンタル">3</label><label class="scaleItem"><input type="radio" name="q25" value="4" data-cat="心・メンタル">4</label></div></div>
+<div class="q"><div class="qtext"><span>7</span>人と会うのが面倒に感じることがある</div><div class="scale"><label class="scaleItem"><input type="radio" name="q26" value="0" data-cat="心・メンタル">0</label><label class="scaleItem"><input type="radio" name="q26" value="1" data-cat="心・メンタル">1</label><label class="scaleItem"><input type="radio" name="q26" value="2" data-cat="心・メンタル">2</label><label class="scaleItem"><input type="radio" name="q26" value="3" data-cat="心・メンタル">3</label><label class="scaleItem"><input type="radio" name="q26" value="4" data-cat="心・メンタル">4</label></div></div>
+<div class="q"><div class="qtext"><span>8</span>考えすぎてしまう</div><div class="scale"><label class="scaleItem"><input type="radio" name="q27" value="0" data-cat="心・メンタル">0</label><label class="scaleItem"><input type="radio" name="q27" value="1" data-cat="心・メンタル">1</label><label class="scaleItem"><input type="radio" name="q27" value="2" data-cat="心・メンタル">2</label><label class="scaleItem"><input type="radio" name="q27" value="3" data-cat="心・メンタル">3</label><label class="scaleItem"><input type="radio" name="q27" value="4" data-cat="心・メンタル">4</label></div></div>
+<div class="q"><div class="qtext"><span>9</span>自分を責めてしまうことがある</div><div class="scale"><label class="scaleItem"><input type="radio" name="q28" value="0" data-cat="心・メンタル">0</label><label class="scaleItem"><input type="radio" name="q28" value="1" data-cat="心・メンタル">1</label><label class="scaleItem"><input type="radio" name="q28" value="2" data-cat="心・メンタル">2</label><label class="scaleItem"><input type="radio" name="q28" value="3" data-cat="心・メンタル">3</label><label class="scaleItem"><input type="radio" name="q28" value="4" data-cat="心・メンタル">4</label></div></div>
+<div class="q"><div class="qtext"><span>10</span>気持ちの切り替えがうまくできない</div><div class="scale"><label class="scaleItem"><input type="radio" name="q29" value="0" data-cat="心・メンタル">0</label><label class="scaleItem"><input type="radio" name="q29" value="1" data-cat="心・メンタル">1</label><label class="scaleItem"><input type="radio" name="q29" value="2" data-cat="心・メンタル">2</label><label class="scaleItem"><input type="radio" name="q29" value="3" data-cat="心・メンタル">3</label><label class="scaleItem"><input type="radio" name="q29" value="4" data-cat="心・メンタル">4</label></div></div>
+</div></details>
+<details class="qGroup"><summary>生活習慣</summary><div class="inside">
+<div class="q"><div class="qtext"><span>1</span>睡眠時間が不足している</div><div class="scale"><label class="scaleItem"><input type="radio" name="q30" value="0" data-cat="生活習慣">0</label><label class="scaleItem"><input type="radio" name="q30" value="1" data-cat="生活習慣">1</label><label class="scaleItem"><input type="radio" name="q30" value="2" data-cat="生活習慣">2</label><label class="scaleItem"><input type="radio" name="q30" value="3" data-cat="生活習慣">3</label><label class="scaleItem"><input type="radio" name="q30" value="4" data-cat="生活習慣">4</label></div></div>
+<div class="q"><div class="qtext"><span>2</span>就寝時間や起床時間が不規則である</div><div class="scale"><label class="scaleItem"><input type="radio" name="q31" value="0" data-cat="生活習慣">0</label><label class="scaleItem"><input type="radio" name="q31" value="1" data-cat="生活習慣">1</label><label class="scaleItem"><input type="radio" name="q31" value="2" data-cat="生活習慣">2</label><label class="scaleItem"><input type="radio" name="q31" value="3" data-cat="生活習慣">3</label><label class="scaleItem"><input type="radio" name="q31" value="4" data-cat="生活習慣">4</label></div></div>
+<div class="q"><div class="qtext"><span>3</span>食事の時間が不規則である</div><div class="scale"><label class="scaleItem"><input type="radio" name="q32" value="0" data-cat="生活習慣">0</label><label class="scaleItem"><input type="radio" name="q32" value="1" data-cat="生活習慣">1</label><label class="scaleItem"><input type="radio" name="q32" value="2" data-cat="生活習慣">2</label><label class="scaleItem"><input type="radio" name="q32" value="3" data-cat="生活習慣">3</label><label class="scaleItem"><input type="radio" name="q32" value="4" data-cat="生活習慣">4</label></div></div>
+<div class="q"><div class="qtext"><span>4</span>栄養バランスが乱れていると感じる</div><div class="scale"><label class="scaleItem"><input type="radio" name="q33" value="0" data-cat="生活習慣">0</label><label class="scaleItem"><input type="radio" name="q33" value="1" data-cat="生活習慣">1</label><label class="scaleItem"><input type="radio" name="q33" value="2" data-cat="生活習慣">2</label><label class="scaleItem"><input type="radio" name="q33" value="3" data-cat="生活習慣">3</label><label class="scaleItem"><input type="radio" name="q33" value="4" data-cat="生活習慣">4</label></div></div>
+<div class="q"><div class="qtext"><span>5</span>水分をあまり取れていない</div><div class="scale"><label class="scaleItem"><input type="radio" name="q34" value="0" data-cat="生活習慣">0</label><label class="scaleItem"><input type="radio" name="q34" value="1" data-cat="生活習慣">1</label><label class="scaleItem"><input type="radio" name="q34" value="2" data-cat="生活習慣">2</label><label class="scaleItem"><input type="radio" name="q34" value="3" data-cat="生活習慣">3</label><label class="scaleItem"><input type="radio" name="q34" value="4" data-cat="生活習慣">4</label></div></div>
+<div class="q"><div class="qtext"><span>6</span>運動不足を感じる</div><div class="scale"><label class="scaleItem"><input type="radio" name="q35" value="0" data-cat="生活習慣">0</label><label class="scaleItem"><input type="radio" name="q35" value="1" data-cat="生活習慣">1</label><label class="scaleItem"><input type="radio" name="q35" value="2" data-cat="生活習慣">2</label><label class="scaleItem"><input type="radio" name="q35" value="3" data-cat="生活習慣">3</label><label class="scaleItem"><input type="radio" name="q35" value="4" data-cat="生活習慣">4</label></div></div>
+<div class="q"><div class="qtext"><span>7</span>スマホやパソコンを見る時間が長い</div><div class="scale"><label class="scaleItem"><input type="radio" name="q36" value="0" data-cat="生活習慣">0</label><label class="scaleItem"><input type="radio" name="q36" value="1" data-cat="生活習慣">1</label><label class="scaleItem"><input type="radio" name="q36" value="2" data-cat="生活習慣">2</label><label class="scaleItem"><input type="radio" name="q36" value="3" data-cat="生活習慣">3</label><label class="scaleItem"><input type="radio" name="q36" value="4" data-cat="生活習慣">4</label></div></div>
+<div class="q"><div class="qtext"><span>8</span>休憩を取らずに頑張りすぎてしまう</div><div class="scale"><label class="scaleItem"><input type="radio" name="q37" value="0" data-cat="生活習慣">0</label><label class="scaleItem"><input type="radio" name="q37" value="1" data-cat="生活習慣">1</label><label class="scaleItem"><input type="radio" name="q37" value="2" data-cat="生活習慣">2</label><label class="scaleItem"><input type="radio" name="q37" value="3" data-cat="生活習慣">3</label><label class="scaleItem"><input type="radio" name="q37" value="4" data-cat="生活習慣">4</label></div></div>
+<div class="q"><div class="qtext"><span>9</span>入浴せずシャワーだけで済ませることが多い</div><div class="scale"><label class="scaleItem"><input type="radio" name="q38" value="0" data-cat="生活習慣">0</label><label class="scaleItem"><input type="radio" name="q38" value="1" data-cat="生活習慣">1</label><label class="scaleItem"><input type="radio" name="q38" value="2" data-cat="生活習慣">2</label><label class="scaleItem"><input type="radio" name="q38" value="3" data-cat="生活習慣">3</label><label class="scaleItem"><input type="radio" name="q38" value="4" data-cat="生活習慣">4</label></div></div>
+<div class="q"><div class="qtext"><span>10</span>自分の身体をケアする時間が少ない</div><div class="scale"><label class="scaleItem"><input type="radio" name="q39" value="0" data-cat="生活習慣">0</label><label class="scaleItem"><input type="radio" name="q39" value="1" data-cat="生活習慣">1</label><label class="scaleItem"><input type="radio" name="q39" value="2" data-cat="生活習慣">2</label><label class="scaleItem"><input type="radio" name="q39" value="3" data-cat="生活習慣">3</label><label class="scaleItem"><input type="radio" name="q39" value="4" data-cat="生活習慣">4</label></div></div>
+</div></details>
+<details class="qGroup"><summary>仕事・家庭・環境</summary><div class="inside">
+<div class="q"><div class="qtext"><span>1</span>仕事や家事の負担が大きい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q40" value="0" data-cat="仕事・家庭・環境">0</label><label class="scaleItem"><input type="radio" name="q40" value="1" data-cat="仕事・家庭・環境">1</label><label class="scaleItem"><input type="radio" name="q40" value="2" data-cat="仕事・家庭・環境">2</label><label class="scaleItem"><input type="radio" name="q40" value="3" data-cat="仕事・家庭・環境">3</label><label class="scaleItem"><input type="radio" name="q40" value="4" data-cat="仕事・家庭・環境">4</label></div></div>
+<div class="q"><div class="qtext"><span>2</span>人間関係でストレスを感じる</div><div class="scale"><label class="scaleItem"><input type="radio" name="q41" value="0" data-cat="仕事・家庭・環境">0</label><label class="scaleItem"><input type="radio" name="q41" value="1" data-cat="仕事・家庭・環境">1</label><label class="scaleItem"><input type="radio" name="q41" value="2" data-cat="仕事・家庭・環境">2</label><label class="scaleItem"><input type="radio" name="q41" value="3" data-cat="仕事・家庭・環境">3</label><label class="scaleItem"><input type="radio" name="q41" value="4" data-cat="仕事・家庭・環境">4</label></div></div>
+<div class="q"><div class="qtext"><span>3</span>忙しくて自分の時間が取れない</div><div class="scale"><label class="scaleItem"><input type="radio" name="q42" value="0" data-cat="仕事・家庭・環境">0</label><label class="scaleItem"><input type="radio" name="q42" value="1" data-cat="仕事・家庭・環境">1</label><label class="scaleItem"><input type="radio" name="q42" value="2" data-cat="仕事・家庭・環境">2</label><label class="scaleItem"><input type="radio" name="q42" value="3" data-cat="仕事・家庭・環境">3</label><label class="scaleItem"><input type="radio" name="q42" value="4" data-cat="仕事・家庭・環境">4</label></div></div>
+<div class="q"><div class="qtext"><span>4</span>周囲に気を遣いすぎてしまう</div><div class="scale"><label class="scaleItem"><input type="radio" name="q43" value="0" data-cat="仕事・家庭・環境">0</label><label class="scaleItem"><input type="radio" name="q43" value="1" data-cat="仕事・家庭・環境">1</label><label class="scaleItem"><input type="radio" name="q43" value="2" data-cat="仕事・家庭・環境">2</label><label class="scaleItem"><input type="radio" name="q43" value="3" data-cat="仕事・家庭・環境">3</label><label class="scaleItem"><input type="radio" name="q43" value="4" data-cat="仕事・家庭・環境">4</label></div></div>
+<div class="q"><div class="qtext"><span>5</span>休んでいても仕事や予定のことを考えてしまう</div><div class="scale"><label class="scaleItem"><input type="radio" name="q44" value="0" data-cat="仕事・家庭・環境">0</label><label class="scaleItem"><input type="radio" name="q44" value="1" data-cat="仕事・家庭・環境">1</label><label class="scaleItem"><input type="radio" name="q44" value="2" data-cat="仕事・家庭・環境">2</label><label class="scaleItem"><input type="radio" name="q44" value="3" data-cat="仕事・家庭・環境">3</label><label class="scaleItem"><input type="radio" name="q44" value="4" data-cat="仕事・家庭・環境">4</label></div></div>
+<div class="q"><div class="qtext"><span>6</span>家庭や生活環境の中で落ち着けないことがある</div><div class="scale"><label class="scaleItem"><input type="radio" name="q45" value="0" data-cat="仕事・家庭・環境">0</label><label class="scaleItem"><input type="radio" name="q45" value="1" data-cat="仕事・家庭・環境">1</label><label class="scaleItem"><input type="radio" name="q45" value="2" data-cat="仕事・家庭・環境">2</label><label class="scaleItem"><input type="radio" name="q45" value="3" data-cat="仕事・家庭・環境">3</label><label class="scaleItem"><input type="radio" name="q45" value="4" data-cat="仕事・家庭・環境">4</label></div></div>
+<div class="q"><div class="qtext"><span>7</span>悩みを相談できる相手が少ない</div><div class="scale"><label class="scaleItem"><input type="radio" name="q46" value="0" data-cat="仕事・家庭・環境">0</label><label class="scaleItem"><input type="radio" name="q46" value="1" data-cat="仕事・家庭・環境">1</label><label class="scaleItem"><input type="radio" name="q46" value="2" data-cat="仕事・家庭・環境">2</label><label class="scaleItem"><input type="radio" name="q46" value="3" data-cat="仕事・家庭・環境">3</label><label class="scaleItem"><input type="radio" name="q46" value="4" data-cat="仕事・家庭・環境">4</label></div></div>
+<div class="q"><div class="qtext"><span>8</span>責任感が強く、無理をしやすい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q47" value="0" data-cat="仕事・家庭・環境">0</label><label class="scaleItem"><input type="radio" name="q47" value="1" data-cat="仕事・家庭・環境">1</label><label class="scaleItem"><input type="radio" name="q47" value="2" data-cat="仕事・家庭・環境">2</label><label class="scaleItem"><input type="radio" name="q47" value="3" data-cat="仕事・家庭・環境">3</label><label class="scaleItem"><input type="radio" name="q47" value="4" data-cat="仕事・家庭・環境">4</label></div></div>
+<div class="q"><div class="qtext"><span>9</span>気づくと予定を詰め込みすぎている</div><div class="scale"><label class="scaleItem"><input type="radio" name="q48" value="0" data-cat="仕事・家庭・環境">0</label><label class="scaleItem"><input type="radio" name="q48" value="1" data-cat="仕事・家庭・環境">1</label><label class="scaleItem"><input type="radio" name="q48" value="2" data-cat="仕事・家庭・環境">2</label><label class="scaleItem"><input type="radio" name="q48" value="3" data-cat="仕事・家庭・環境">3</label><label class="scaleItem"><input type="radio" name="q48" value="4" data-cat="仕事・家庭・環境">4</label></div></div>
+<div class="q"><div class="qtext"><span>10</span>心から安心できる時間が少ない</div><div class="scale"><label class="scaleItem"><input type="radio" name="q49" value="0" data-cat="仕事・家庭・環境">0</label><label class="scaleItem"><input type="radio" name="q49" value="1" data-cat="仕事・家庭・環境">1</label><label class="scaleItem"><input type="radio" name="q49" value="2" data-cat="仕事・家庭・環境">2</label><label class="scaleItem"><input type="radio" name="q49" value="3" data-cat="仕事・家庭・環境">3</label><label class="scaleItem"><input type="radio" name="q49" value="4" data-cat="仕事・家庭・環境">4</label></div></div>
+</div></details>
+<details class="qGroup"><summary>回復力・セルフケア</summary><div class="inside">
+<div class="q"><div class="qtext"><span>1</span>寝ても疲れが取れにくい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q50" value="0" data-cat="回復力・セルフケア">0</label><label class="scaleItem"><input type="radio" name="q50" value="1" data-cat="回復力・セルフケア">1</label><label class="scaleItem"><input type="radio" name="q50" value="2" data-cat="回復力・セルフケア">2</label><label class="scaleItem"><input type="radio" name="q50" value="3" data-cat="回復力・セルフケア">3</label><label class="scaleItem"><input type="radio" name="q50" value="4" data-cat="回復力・セルフケア">4</label></div></div>
+<div class="q"><div class="qtext"><span>2</span>休んでも身体が回復しにくい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q51" value="0" data-cat="回復力・セルフケア">0</label><label class="scaleItem"><input type="radio" name="q51" value="1" data-cat="回復力・セルフケア">1</label><label class="scaleItem"><input type="radio" name="q51" value="2" data-cat="回復力・セルフケア">2</label><label class="scaleItem"><input type="radio" name="q51" value="3" data-cat="回復力・セルフケア">3</label><label class="scaleItem"><input type="radio" name="q51" value="4" data-cat="回復力・セルフケア">4</label></div></div>
+<div class="q"><div class="qtext"><span>3</span>不調が出ても我慢してしまう</div><div class="scale"><label class="scaleItem"><input type="radio" name="q52" value="0" data-cat="回復力・セルフケア">0</label><label class="scaleItem"><input type="radio" name="q52" value="1" data-cat="回復力・セルフケア">1</label><label class="scaleItem"><input type="radio" name="q52" value="2" data-cat="回復力・セルフケア">2</label><label class="scaleItem"><input type="radio" name="q52" value="3" data-cat="回復力・セルフケア">3</label><label class="scaleItem"><input type="radio" name="q52" value="4" data-cat="回復力・セルフケア">4</label></div></div>
+<div class="q"><div class="qtext"><span>4</span>自分の疲れに気づきにくい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q53" value="0" data-cat="回復力・セルフケア">0</label><label class="scaleItem"><input type="radio" name="q53" value="1" data-cat="回復力・セルフケア">1</label><label class="scaleItem"><input type="radio" name="q53" value="2" data-cat="回復力・セルフケア">2</label><label class="scaleItem"><input type="radio" name="q53" value="3" data-cat="回復力・セルフケア">3</label><label class="scaleItem"><input type="radio" name="q53" value="4" data-cat="回復力・セルフケア">4</label></div></div>
+<div class="q"><div class="qtext"><span>5</span>身体のサインを後回しにしやすい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q54" value="0" data-cat="回復力・セルフケア">0</label><label class="scaleItem"><input type="radio" name="q54" value="1" data-cat="回復力・セルフケア">1</label><label class="scaleItem"><input type="radio" name="q54" value="2" data-cat="回復力・セルフケア">2</label><label class="scaleItem"><input type="radio" name="q54" value="3" data-cat="回復力・セルフケア">3</label><label class="scaleItem"><input type="radio" name="q54" value="4" data-cat="回復力・セルフケア">4</label></div></div>
+<div class="q"><div class="qtext"><span>6</span>セルフケアを続けるのが苦手である</div><div class="scale"><label class="scaleItem"><input type="radio" name="q55" value="0" data-cat="回復力・セルフケア">0</label><label class="scaleItem"><input type="radio" name="q55" value="1" data-cat="回復力・セルフケア">1</label><label class="scaleItem"><input type="radio" name="q55" value="2" data-cat="回復力・セルフケア">2</label><label class="scaleItem"><input type="radio" name="q55" value="3" data-cat="回復力・セルフケア">3</label><label class="scaleItem"><input type="radio" name="q55" value="4" data-cat="回復力・セルフケア">4</label></div></div>
+<div class="q"><div class="qtext"><span>7</span>調子が悪くなってから対処することが多い</div><div class="scale"><label class="scaleItem"><input type="radio" name="q56" value="0" data-cat="回復力・セルフケア">0</label><label class="scaleItem"><input type="radio" name="q56" value="1" data-cat="回復力・セルフケア">1</label><label class="scaleItem"><input type="radio" name="q56" value="2" data-cat="回復力・セルフケア">2</label><label class="scaleItem"><input type="radio" name="q56" value="3" data-cat="回復力・セルフケア">3</label><label class="scaleItem"><input type="radio" name="q56" value="4" data-cat="回復力・セルフケア">4</label></div></div>
+<div class="q"><div class="qtext"><span>8</span>自分に合った休み方がわからない</div><div class="scale"><label class="scaleItem"><input type="radio" name="q57" value="0" data-cat="回復力・セルフケア">0</label><label class="scaleItem"><input type="radio" name="q57" value="1" data-cat="回復力・セルフケア">1</label><label class="scaleItem"><input type="radio" name="q57" value="2" data-cat="回復力・セルフケア">2</label><label class="scaleItem"><input type="radio" name="q57" value="3" data-cat="回復力・セルフケア">3</label><label class="scaleItem"><input type="radio" name="q57" value="4" data-cat="回復力・セルフケア">4</label></div></div>
+<div class="q"><div class="qtext"><span>9</span>体調の波が大きい</div><div class="scale"><label class="scaleItem"><input type="radio" name="q58" value="0" data-cat="回復力・セルフケア">0</label><label class="scaleItem"><input type="radio" name="q58" value="1" data-cat="回復力・セルフケア">1</label><label class="scaleItem"><input type="radio" name="q58" value="2" data-cat="回復力・セルフケア">2</label><label class="scaleItem"><input type="radio" name="q58" value="3" data-cat="回復力・セルフケア">3</label><label class="scaleItem"><input type="radio" name="q58" value="4" data-cat="回復力・セルフケア">4</label></div></div>
+<div class="q"><div class="qtext"><span>10</span>今の生活を変えたいが、何から始めればいいかわからない</div><div class="scale"><label class="scaleItem"><input type="radio" name="q59" value="0" data-cat="回復力・セルフケア">0</label><label class="scaleItem"><input type="radio" name="q59" value="1" data-cat="回復力・セルフケア">1</label><label class="scaleItem"><input type="radio" name="q59" value="2" data-cat="回復力・セルフケア">2</label><label class="scaleItem"><input type="radio" name="q59" value="3" data-cat="回復力・セルフケア">3</label><label class="scaleItem"><input type="radio" name="q59" value="4" data-cat="回復力・セルフケア">4</label></div></div>
+    </div></details>
+    <div class="btnrow"><button class="ghost" id="openAllQuestionsBtn" type="button">質問をすべて開く</button><button class="ghost" id="closeQuestionsBtn" type="button">質問を閉じる</button><button class="btn" id="calcBtn" type="button">点数を計算</button></div>
+  </div>
+  <div class="card"><h3>集計</h3><div id="scores" class="output">点数計算ボタンを押すと表示されます。</div></div>
+  <div class="card"><h3>自由記述</h3><label>改善したいこと・もっと良くしたいこと</label><textarea id="improveText"></textarea><label>いつ頃から気になるか</label><textarea id="sinceText"></textarea><label>悪化しやすいタイミング</label><textarea id="worseText"></textarea><label>楽になるタイミング</label><textarea id="betterText"></textarea><label>施術・生活習慣サポートに期待すること</label><textarea id="expectText"></textarea></div>
+  <div class="card"><h3>食事・栄養の確認</h3><p class="mini">無理な制限ではなく、追加・置き換え・水分・たんぱく質など、続けやすい食事アドバイスに使います。</p><label>普段の食事で気になること</label><textarea id="dietConcern" placeholder="例：朝食を抜きやすい／甘いものが多い／外食が多い／水分が少ない"></textarea><label>食事で改善したいこと</label><textarea id="dietGoal" placeholder="例：むくみを減らしたい／体型を整えたい／疲れにくくしたい／便通を整えたい"></textarea><label>避けたい食材・アレルギー・制限</label><textarea id="dietRestriction" placeholder="例：アレルギー、苦手な食材、医師からの制限、妊娠中・授乳中など"></textarea></div>
+  <div class="card"><h3>姿勢写真</h3><p class="mini">顔や個人情報が入らないようにしてください。AIに送る場合は、同意書の確認を前提にします。</p><div class="grid three"><div><label>正面</label><input type="file" accept="image/*" data-preview="prevFront"><img id="prevFront" class="photoPreview"></div><div><label>横向き</label><input type="file" accept="image/*" data-preview="prevSide"><img id="prevSide" class="photoPreview"></div><div><label>後ろ</label><input type="file" accept="image/*" data-preview="prevBack"><img id="prevBack" class="photoPreview"></div></div></div>
+  <div class="card"><h3>安全確認</h3><label>赤旗症状・注意点</label><textarea id="redFlags" placeholder="強い痛み、しびれ、発熱、息苦しさ、胸痛、急な体調変化など"></textarea></div>
+  <div class="stickyBottom"><div class="btnrow"><a class="ghost" href="#consent">戻る</a><a class="btn" href="#patient">患者様用へ</a></div></div>
+</section>
+
+<section id="patient" class="page">
+  <div class="card"><h2>患者様用ページ</h2><p>患者さんに渡すレポート、改善点・目標、変化の記録を作成します。</p><div class="btnrow"><button class="btn" id="patientBtn" type="button">患者様用レポート下書きを作成</button><button class="ghost" data-copy="patientReport" type="button">レポートをコピー</button></div></div>
+  <div class="card"><h3>改善点と目標欄</h3><label>今回の改善ポイント</label><textarea id="patientGoals" placeholder="例：首肩の張りを減らす／寝る前の緊張を抜く／週3回歩くなど"></textarea><label>1週間〜3ヶ月で目指す状態</label><textarea id="patientTargets" placeholder="例：1週間後は寝る前の呼吸を継続、1ヶ月後は肩こりの頻度を確認、3ヶ月後に姿勢写真と点数を再評価"></textarea></div>
+  <div class="card"><h3>変化記入欄</h3><label>患者さんが感じた変化</label><textarea id="patientChanges" placeholder="例：睡眠、痛み、疲労感、姿勢、歩きやすさ、体重・体型、気分などの変化"></textarea><label>次回までに確認したいこと</label><textarea id="patientNextCheck" placeholder="例：どの時間帯に痛みが出るか／習慣が何日できたか／運動後に悪化しないか"></textarea></div>
+  <div class="card"><label>患者様用レポート</label><textarea id="patientReport" style="min-height:420px"></textarea></div>
+  <div class="stickyBottom"><div class="btnrow"><a class="ghost" href="#check">戻る</a><a class="btn" href="#plan">改善案へ</a></div></div>
+</section>
+
+<section id="plan" class="page">
+  <div class="card"><h2>改善案ページ</h2><p>今週の習慣、曜日別プラン、3ヶ月分の習慣達成カレンダーを作成します。</p><div class="shortGuide"><strong>v18の使い方：</strong>AIの回答をすべて読まなくても、回答の一番上にある「Webアプリ転記用まとめ」を貼り付ければ、改善点・習慣・食事欄へ自動転記できます。</div></div>
+  <div class="card"><h3>AI回答貼り付け・自動転記</h3><p class="mini">ChatGPTの回答のうち、最上部の「Webアプリ転記用まとめ」をそのまま貼り付けてください。該当する欄へ自動で振り分けます。</p><div class="aiPasteBox"><label>AI回答を貼り付け</label><textarea id="aiAnswerPaste" placeholder="ここにAI回答を貼り付け
+例：
+【Webアプリ転記用まとめ】
+改善するべき点：...
+改善の優先順位：...
+今週の習慣1：..."></textarea><div class="btnrow"><button class="btn" id="extractAiAnswerBtn" type="button">改善案欄へ自動転記</button><button class="ghost" id="clearAiPasteBtn" type="button">貼り付け欄をクリア</button></div><p id="extractStatus" class="mini"></p></div></div>
+  <div class="card"><h3>改善するべき点・改善方針</h3><p class="mini">施術者が、姿勢写真・チェック結果・問診から見た改善ポイントを具体的に記入します。</p><label>改善するべき点</label><textarea id="improvementFocus" placeholder="例：首のストレートネック傾向を改善するため、首の後ろの筋肉の筋緊張緩和を目指します。また、反り腰気味のため、背部・体幹のトレーニング習慣をつけましょう。"></textarea><div class="fieldHint">AI回答から自動転記できます。必要ならここで大樹さんの言葉に整えてください。</div><label>改善の優先順位</label><textarea id="improvementPriority" placeholder="例：①首肩の緊張緩和 ②胸郭・背中の可動性 ③体幹・背筋の安定性"></textarea></div>
+  <div class="card"><h3>習慣プラン</h3><label>今週の習慣 1</label><textarea id="habit1" placeholder="例：寝る前に4秒吸って6秒吐く呼吸を3分"></textarea><label>今週の習慣 2</label><textarea id="habit2" placeholder="例：夕食後に10分歩く"></textarea><label>今週の習慣 3</label><textarea id="habit3" placeholder="例：胸のストレッチを左右30秒ずつ"></textarea><label>曜日別プラン</label><textarea id="weeklyPlan" placeholder="月：呼吸3分／火：呼吸3分＋散歩10分…"></textarea></div>
+  <div class="card"><h3>食事アドバイス</h3><p class="mini">極端な制限ではなく、患者さんが実行しやすい「追加・置き換え・タイミング」の提案を記入します。</p><label>食事で改善するべき点</label><textarea id="nutritionFocus" placeholder="例：たんぱく質が不足しやすいため、昼食に卵・魚・鶏肉・豆腐などを1品追加します。"></textarea><label>今週の食事アクション</label><textarea id="nutritionAction" placeholder="例：朝または昼にたんぱく質を手のひら1枚分追加／水を1日1.5L目安／夜食は軽めにする"></textarea><label>水分・間食・外食のポイント</label><textarea id="hydrationSnackAdvice" placeholder="例：甘い飲み物を水やお茶に置き換える／間食はナッツ・ヨーグルト・ゆで卵などにする"></textarea><label>注意点</label><textarea id="nutritionCaution" placeholder="例：持病・服薬・妊娠中・授乳中・急激な体重変化がある場合は、医療機関や管理栄養士へ相談"></textarea></div>
+  <div class="card"><h3>3ヶ月 習慣達成チェックカレンダー</h3><p class="mini">改善案ページを開くと、今月から3ヶ月分のカレンダーが自動で表示されます。表示されない場合は「今月から表示」を押してください。毎日、習慣ができた日にチェックしてください。</p><div class="calControls"><div class="grid two"><div><label>開始年</label><input id="calendarYear" type="number" inputmode="numeric" min="2020" max="2100" placeholder="例：2026"></div><div><label>開始月</label><input id="calendarMonth" type="number" inputmode="numeric" min="1" max="12" placeholder="例：7"></div></div><input id="calendarStart" type="hidden"><div class="btnrow"><button class="btn" id="calendarBtn" type="button" onclick="window.YC_renderHabitCalendar && window.YC_renderHabitCalendar(true)">3ヶ月カレンダーを表示/更新</button><button class="ghost" id="calendarThisMonthBtn" type="button" onclick="window.YC_setCalendarThisMonth && window.YC_setCalendarThisMonth()">今月から表示</button></div></div><div id="calendarArea" class="calendarWrap"><p class="mini">カレンダーを準備中です。表示されない場合は「今月から表示」を押してください。</p></div><div id="calendarSummary" class="calSummary">3ヶ月カレンダー：準備中</div></div>
+  <div class="stickyBottom"><div class="btnrow"><a class="ghost" href="#patient">戻る</a><a class="btn" href="#practitioner">施術者用へ</a></div></div>
+</section>
+
+<section id="practitioner" class="page">
+  <div class="card"><h2>施術者用ページ</h2><p>施術者の見立て・施術方針・注意点を記録し、AI統合プロンプトを生成します。</p></div>
+  <div class="card"><label>姿勢評価メモ</label><textarea id="postureMemo"></textarea><label>触診・可動域・筋緊張メモ</label><textarea id="bodyMemo"></textarea><label>施術方針メモ</label><textarea id="treatmentMemo"></textarea><label>注意点・次回確認</label><textarea id="nextMemo"></textarea></div>
+  <div class="card"><h3>AI統合プロンプト作成</h3><p class="mini">v19では、AIの回答を短くし、最上部に「Webアプリ転記用まとめ」が出るようにしています。そこだけ貼り付ければ改善案欄へ自動転記できます。</p><div class="btnrow"><button class="btn" id="promptBtn" type="button">AI統合プロンプトを生成</button><button class="ghost" data-copy="aiPrompt" type="button">コピー</button><button class="ghost" id="printBtn" type="button">印刷 / PDF保存</button></div><label>AI統合プロンプト</label><textarea id="aiPrompt" style="min-height:520px"></textarea></div>
+  <div class="stickyBottom"><div class="btnrow"><a class="ghost" href="#plan">戻る</a><a class="btn" href="#share">保存・共有へ</a></div></div>
+</section>
+
+<section id="share" class="page">
+  <div class="card">
+    <h2>送信・返送ページ</h2>
+    <p>普段使う操作は2つだけです。</p>
+    <div class="readabilityBox"><strong>患者さん側：</strong>「大樹さんに送る」<br><strong>大樹さん側：</strong>「患者さんへ返す」</div>
+    <p class="mini warn">長いURL対策として、v19ではURLに入れる情報を必要最小限にしています。写真・AIプロンプト全文・60問すべての回答・長文メモはURLに含めません。</p>
+  </div>
+  <div class="card">
+    <h3>患者さん → 大樹さん</h3>
+    <div class="simpleAction">
+      <p><strong>入力が終わったら、このボタンだけ押してください。</strong></p>
+      <div class="btnrow"><button class="btn bigBtn" id="makePatientUrlBtn" type="button">大樹さんに送るURLを作成</button><button class="ghost" id="sharePatientUrlBtn" type="button">LINEで送る</button></div>
+      <label>大樹さんに送るURL</label>
+      <textarea id="patientShareUrl" style="min-height:110px" placeholder="ここにURLが作成されます"></textarea>
+      <p id="patientUrlLengthStatus" class="mini"></p>
+      <label>LINE送信用メッセージ</label>
+      <textarea id="lineShareText" style="min-height:170px" placeholder="URL作成後、ここにLINEへ貼る文面が作成されます"></textarea>
+      <div class="btnrow"><button class="ghost" data-copy="lineShareText" type="button">LINE文面をコピー</button><button class="ghost" data-copy="patientShareUrl" type="button">URLだけコピー</button></div>
+    </div>
+    <p class="mini">姿勢写真は、このURLには含まれません。同意を取ったうえでLINEに別送してください。</p>
+  </div>
+  <div class="card">
+    <h3>大樹さん → 患者さん</h3>
+    <div class="simpleAction">
+      <p><strong>改善案を記入したら、このボタンで患者さんに返します。</strong></p>
+      <div class="btnrow"><button class="btn bigBtn" id="makeReplyUrlBtn" type="button">患者さんへ返すURLを作成</button><button class="ghost" id="shareReplyUrlBtn" type="button">LINEで送る</button></div>
+      <label>患者さんへ返すURL</label>
+      <textarea id="replyShareUrl" style="min-height:110px" placeholder="ここに返信用URLが作成されます"></textarea>
+      <p id="replyUrlLengthStatus" class="mini"></p>
+      <div class="btnrow"><button class="ghost" data-copy="replyShareUrl" type="button">返信URLをコピー</button></div>
+    </div>
+  </div>
+  <details class="backupTools">
+    <summary>予備・管理者用ツールを開く</summary>
+    <div class="inside">
+      <p class="mini">通常は使わなくてOKです。URLが長すぎる、読み込みがうまくいかない、同じ端末内で複数患者さんを管理したい場合だけ使います。</p>
+      <h3>この端末に保存</h3>
+      <div class="btnrow"><button class="ghost" id="saveLocalBtn" type="button">この端末に保存</button><button class="ghost" id="loadLocalBtn" type="button">保存データを読み込み</button><button class="ghost" id="clearLocalBtn" type="button">保存データを削除</button></div>
+      <p id="saveStatus" class="mini"></p>
+      <h3>患者様ごとのデータ管理</h3>
+      <div class="grid two"><div><label>保存名・管理番号</label><input id="recordName" type="text" placeholder="例：No.001 2026/7/3 初回"></div><div><label>保存済みデータ</label><select id="recordSelect"><option value="">保存済みデータを選択</option></select></div></div>
+      <div class="btnrow"><button class="ghost" id="saveRecordBtn" type="button">患者データとして保存</button><button class="ghost" id="loadRecordBtn" type="button">選択データを読み込み</button><button class="ghost" id="deleteRecordBtn" type="button">選択データを削除</button><button class="ghost" id="refreshRecordBtn" type="button">一覧更新</button></div>
+      <p id="recordStatus" class="mini"></p>
+      <h3>共有コード</h3>
+      <p class="mini warn">共有コードはフルデータ寄りの予備機能です。写真は含まれません。</p>
+      <div class="btnrow"><button class="ghost" id="makeCodeBtn" type="button">共有コードを生成</button><button class="ghost" data-copy="shareCode" type="button">共有コードをコピー</button></div>
+      <label>共有コード</label><textarea id="shareCode" style="min-height:160px"></textarea>
+      <label>共有コードを読み込む</label><textarea id="importCode" style="min-height:120px" placeholder="YC19: で始まる共有コードを貼り付け"></textarea>
+      <div class="btnrow"><button class="ghost" id="importCodeBtn" type="button">共有コードを読み込む</button></div>
+    </div>
+  </details>
+  <div class="stickyBottom"><div class="btnrow"><a class="ghost" href="#practitioner">戻る</a><a class="btn" href="#start">最初へ</a></div></div>
+</section>
+
+
+</main>
+<script>
+(function(){
+'use strict';
+var scoreCache = {};
+var activePatientId = ''; // v14ではログインなし。管理番号はpid欄で扱います。
+function $(id){return document.getElementById(id)}
+function val(id){var el=$(id); return el ? el.value.trim() : ''}
+function levelText(v){ if(v>=31)return '負担がかなり強い目安'; if(v>=21)return '負担がやや強い目安'; if(v>=11)return '中等度の負担目安'; return '負担は比較的少なめの目安'; }
+function getGoals(){var arr=[].slice.call(document.querySelectorAll('.goal:checked')).map(function(x){return x.value}); return arr.join('、') || '未選択';}
+function renderScoreOutputFromCache(){
+  var out=''; Object.keys(scoreCache).forEach(function(cat){var v=Number(scoreCache[cat]||0); out += '<div class="scorebox"><div>'+cat+'<br><span class="mini">'+levelText(v)+'</span></div><div class="score">'+v+'/40</div></div>';});
+  if($('scores')) $('scores').innerHTML=out;
+}
+function calculateScores(){
+  scoreCache={'身体の状態':0,'自律神経・内臓':0,'心・メンタル':0,'生活習慣':0,'仕事・家庭・環境':0,'回復力・セルフケア':0};
+  document.querySelectorAll('.q input[type="radio"]:checked').forEach(function(input){var cat=input.getAttribute('data-cat'); scoreCache[cat]=(scoreCache[cat]||0)+Number(input.value);});
+  renderScoreOutputFromCache();
+  return scoreCache;
+}
+function hasCheckedAnswers(){return document.querySelectorAll('.q input[type="radio"]:checked').length>0;}
+function scoreText(){if(hasCheckedAnswers() || !Object.keys(scoreCache||{}).length) calculateScores(); return Object.keys(scoreCache).map(function(k){return '・'+k+'：'+scoreCache[k]+'/40点（'+levelText(scoreCache[k])+'）';}).join('\n');}
+function agreementText(){return '同意確認：' + (($('agree1')&&$('agree1').checked)?'確認済み':'未確認') + '／AI補助理解：' + (($('agree2')&&$('agree2').checked)?'確認済み':'未確認') + '／AIへの写真・記入内容転記同意：' + (($('agree3')&&$('agree3').checked)?'同意済み':'未同意') + '／顔が写る写真のAI分析同意：' + (($('agree4')&&$('agree4').checked)?'同意済み':'未同意');}
+function makePatientReport(){
+  var text = `【患者様用レポート下書き】
+
+管理番号：${val('pid')}
+年代・性別：${val('age')} ${val('sex')}
+目的：${getGoals()}
+
+【現在のお悩み】
+${val('mainConcern')}
+
+【チェック結果】
+${scoreText()}
+
+【改善したいこと】
+${val('improveText')}
+
+【食事・栄養の確認】
+気になること：${val('dietConcern')}
+改善したいこと：${val('dietGoal')}
+制限・注意：${val('dietRestriction')}
+
+【改善点と目標】
+${val('patientGoals')}
+
+【改善するべき点】
+${val('improvementFocus')}
+${val('patientTargets')}
+
+【食事アドバイス】
+改善するべき点：${val('nutritionFocus')}
+今週の食事アクション：${val('nutritionAction')}
+水分・間食・外食：${val('hydrationSnackAdvice')}
+注意点：${val('nutritionCaution')}
+
+【変化記入欄】
+${val('patientChanges')}
+
+【次回までに確認したいこと】
+${val('patientNextCheck')}
+
+【状態の見方】
+今回の結果は、病気の診断ではありません。身体・生活習慣・姿勢・回復力の傾向を整理し、施術やセルフケアの参考にするものです。
+
+【今後の進め方】
+まずは無理なく続けられる小さな習慣を1〜3個に絞り、1週間ごとに体調の変化を確認していきます。3ヶ月後を目安に、セルフチェック点数・姿勢写真・習慣達成状況を再評価します。
+
+【注意事項】
+強い痛み、しびれ、発熱、息苦しさ、胸の痛み、急な体調変化がある場合は、セルフケアを中止し医療機関への相談も検討してください。`;
+  $('patientReport').value=text;
+  scheduleAutoSave();
+}
+function makePrompt(){
+  var consent = agreementText();
+  var prompt = `あなたは、鍼灸・マッサージ施術者の補助として、患者さんのセルフチェック表・自由記述・姿勢写真・施術者メモをもとに、現在の状態を整理し、具体的な改善プランを作成するAIです。
+
+目的は、病気の診断や治療方針の断定ではありません。
+施術者が患者さんの状態を理解し、施術・セルフケア・生活習慣サポートを行うための参考情報としてまとめてください。
+
+# 最重要ルール
+情報量が多すぎると現場で使いにくいため、回答は短く、すぐ転記できる形にしてください。
+最上部に必ず【Webアプリ転記用まとめ】を出してください。
+この見出しとラベル名は変更しないでください。
+各項目は1〜3行以内にしてください。
+患者さんに実行してもらう習慣は最大3つまでにしてください。
+詳しい分析は最後に【施術者用詳細メモ】として短くまとめてください。
+
+# 最初に必ずこの形式で出力
+【Webアプリ転記用まとめ】
+改善するべき点：
+改善の優先順位：
+今週の習慣1：
+今週の習慣2：
+今週の習慣3：
+曜日別プラン：
+食事で改善するべき点：
+今週の食事アクション：
+水分・間食・外食のポイント：
+注意点：
+患者さん向け説明文：
+次回確認：
+
+# 回答量の上限
+・【Webアプリ転記用まとめ】を最優先
+・患者さん向け説明文は500字以内
+・1週間/1ヶ月/2ヶ月/3ヶ月の見通しは各1行
+・施術者用詳細メモは箇条書き10個以内
+・長い総論や教科書的説明は避ける
+・エビデンスは長文にせず【根拠：強/中/限定的】で短く添える
+
+【同意確認】
+${consent}
+※AIへの写真・記入内容の転記同意が未同意の場合、写真や個人情報をAIへ入力せず、匿名化されたテキスト情報のみで分析してください。
+
+【基本情報】
+管理番号：${val('pid')}
+年代：${val('age')}
+性別：${val('sex')}
+目的：${getGoals()}
+主訴：${val('mainConcern')}
+
+【セルフチェック結果】
+${scoreText()}
+
+【自由記述】
+改善したいこと：${val('improveText')}
+いつ頃から：${val('sinceText')}
+悪化しやすいタイミング：${val('worseText')}
+楽になるタイミング：${val('betterText')}
+期待すること：${val('expectText')}
+
+【食事・栄養の確認】
+普段の食事で気になること：${val('dietConcern')}
+食事で改善したいこと：${val('dietGoal')}
+避けたい食材・アレルギー・制限：${val('dietRestriction')}
+
+【既に記入済みの改善案】
+改善するべき点：${val('improvementFocus')}
+改善の優先順位：${val('improvementPriority')}
+今週の習慣1：${val('habit1')}
+今週の習慣2：${val('habit2')}
+今週の習慣3：${val('habit3')}
+曜日別プラン：${val('weeklyPlan')}
+食事で改善するべき点：${val('nutritionFocus')}
+今週の食事アクション：${val('nutritionAction')}
+水分・間食・外食のポイント：${val('hydrationSnackAdvice')}
+食事の注意点：${val('nutritionCaution')}
+
+【姿勢写真】
+正面・横向き・後ろ向きの姿勢写真を添付する場合があります。
+写真は、顔や氏名など個人が特定されやすい情報を含めない前提で扱ってください。
+写真が添付されている場合は、姿勢傾向を読み取ってください。
+写真が添付されていない場合は「姿勢写真は未添付」として、記入情報のみで整理してください。
+
+【施術者メモ】
+姿勢評価：${val('postureMemo')}
+触診・可動域・筋緊張：${val('bodyMemo')}
+施術方針：${val('treatmentMemo')}
+注意点・次回確認：${val('nextMemo')}
+
+【安全確認】
+${val('redFlags')}
+
+# 基本ルール
+・病名を断定しない
+・治る、改善すると断定しない
+・何kg痩せると断定しない
+・未来の状態を断定しない
+・写真だけで姿勢を断定しない
+・医療診断や治療方針の決定は行わない
+・施術者の最終判断を補助する内容としてまとめる
+・不明な情報は推測せず「読み取り不明」と書く
+・患者さんを不安にさせない
+・できていないことを責めない
+・前向きで伴走型の表現にする
+・食事は極端な制限ではなく、追加・置き換え・水分・たんぱく質・外食時の選び方を中心にする
+・持病、服薬、妊娠中、授乳中、急激な体重変化、摂食障害の可能性がある場合は医療機関や管理栄養士への相談を促す
+
+# 見てほしいポイント
+1. 患者さんの目的と優先順位
+2. 改善するべき点
+3. 今週やる習慣を最大3つ
+4. 食事で今週やることを最大2つ
+5. 1週間、1ヶ月、2ヶ月、3ヶ月の変化の目安
+6. 施術者が確認すべきこと
+7. 中止・相談の目安
+
+# 施術者用詳細メモの形式
+【施術者用詳細メモ】
+・目的と優先順位：
+・身体/姿勢の傾向：
+・生活習慣/食事の傾向：
+・1週間後の目安：
+・1ヶ月後の目安：
+・2ヶ月後の目安：
+・3ヶ月後の目安：
+・施術で確認すること：
+・注意が必要な点：
+・根拠レベル：`;
+  $('aiPrompt').value = prompt;
+  scheduleAutoSave();
+}
+
+function escapeRegExp(str){return String(str).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+function extractFieldFromText(text,label,labels){
+  if(!text) return '';
+  labels=labels||[];
+  var startRe=new RegExp('(?:^|\\n)\\s*'+escapeRegExp(label)+'\\s*[：:]\\s*','m');
+  var m=startRe.exec(text);
+  if(!m) return '';
+  var start=m.index+m[0].length;
+  var end=text.length;
+  labels.forEach(function(l){
+    if(l===label) return;
+    var re=new RegExp('\\n\\s*'+escapeRegExp(l)+'\\s*[：:]','m');
+    var sub=text.slice(start);
+    var mm=re.exec(sub);
+    if(mm){end=Math.min(end,start+mm.index);}
+  });
+  return text.slice(start,end).trim().replace(/^[-・\s]+/,'').trim();
+}
+function setIfFound(id,value,changed){
+  var el=$(id); if(el && value){el.value=value; changed.push(id);}
+}
+function extractAiAnswerToFields(){
+  var text=val('aiAnswerPaste');
+  if(!text){alert('AI回答を貼り付けてください'); return;}
+  var labels=['改善するべき点','改善の優先順位','今週の習慣1','今週の習慣2','今週の習慣3','曜日別プラン','食事で改善するべき点','今週の食事アクション','水分・間食・外食のポイント','注意点','患者さん向け説明文','次回確認'];
+  var changed=[];
+  setIfFound('improvementFocus', extractFieldFromText(text,'改善するべき点',labels), changed);
+  setIfFound('improvementPriority', extractFieldFromText(text,'改善の優先順位',labels), changed);
+  setIfFound('habit1', extractFieldFromText(text,'今週の習慣1',labels), changed);
+  setIfFound('habit2', extractFieldFromText(text,'今週の習慣2',labels), changed);
+  setIfFound('habit3', extractFieldFromText(text,'今週の習慣3',labels), changed);
+  setIfFound('weeklyPlan', extractFieldFromText(text,'曜日別プラン',labels), changed);
+  setIfFound('nutritionFocus', extractFieldFromText(text,'食事で改善するべき点',labels), changed);
+  setIfFound('nutritionAction', extractFieldFromText(text,'今週の食事アクション',labels), changed);
+  setIfFound('hydrationSnackAdvice', extractFieldFromText(text,'水分・間食・外食のポイント',labels), changed);
+  setIfFound('nutritionCaution', extractFieldFromText(text,'注意点',labels), changed);
+  setIfFound('patientReport', extractFieldFromText(text,'患者さん向け説明文',labels), changed);
+  setIfFound('patientNextCheck', extractFieldFromText(text,'次回確認',labels), changed);
+  if($('extractStatus')){
+    $('extractStatus').innerHTML = changed.length ? '<span class="statusOk">自動転記しました：</span>'+changed.length+'項目' : '転記できる項目が見つかりませんでした。AI回答の「Webアプリ転記用まとめ」を貼り付けてください。';
+  }
+  scheduleAutoSave();
+}
+function clearAiPaste(){ if($('aiAnswerPaste')) $('aiAnswerPaste').value=''; if($('extractStatus')) $('extractStatus').textContent='貼り付け欄をクリアしました'; scheduleAutoSave(); }
+
+function copyText(id){var el=$(id); if(!el) return; el.focus(); el.select(); el.setSelectionRange(0,999999); try{document.execCommand('copy'); alert('コピーしました');}catch(e){alert('コピーできませんでした。手動で選択してコピーしてください。')}}
+function previewPhoto(input,imgId){var img=$(imgId); if(input.files && input.files[0] && img){var reader=new FileReader(); reader.onload=function(e){img.src=e.target.result; img.style.display='block';}; reader.readAsDataURL(input.files[0]);}}
+
+
+function pad2(n){return String(n).padStart(2,'0')}
+function monthLabel(y,m){return y+'年'+(m+1)+'月'}
+function addMonths(date,n){return new Date(date.getFullYear(), date.getMonth()+n, 1)}
+function getCalendarBase(){
+  var now=new Date();
+  var yEl=$('calendarYear'), mEl=$('calendarMonth'), hidden=$('calendarStart');
+  var y=parseInt(yEl && yEl.value ? yEl.value : now.getFullYear(),10);
+  var m=parseInt(mEl && mEl.value ? mEl.value : now.getMonth()+1,10);
+  if(!y || y<2020 || y>2100) y=now.getFullYear();
+  if(!m || m<1 || m>12) m=now.getMonth()+1;
+  if(yEl) yEl.value=y;
+  if(mEl) mEl.value=m;
+  if(hidden) hidden.value=y+'-'+pad2(m);
+  return new Date(y, m-1, 1);
+}
+function renderHabitCalendar(showAlert){
+  try{
+    var area=$('calendarArea'); if(!area) return;
+    var base=getCalendarBase();
+    var week=['日','月','火','水','木','金','土'];
+    var oldChecks={};
+    document.querySelectorAll('.calCheck').forEach(function(chk){oldChecks[chk.id]=chk.checked;});
+    var html='';
+    for(var mi=0; mi<3; mi++){
+      var d=addMonths(base,mi);
+      var y=d.getFullYear();
+      var m=d.getMonth();
+      var days=new Date(y,m+1,0).getDate();
+      var first=new Date(y,m,1).getDay();
+      html+='<div class="calendarBlock"><div class="monthTitle"><h4>'+monthLabel(y,m)+'</h4><span>達成日にチェック</span></div><div class="calGrid">';
+      week.forEach(function(w){html+='<div class="calHead">'+w+'</div>';});
+      for(var b=0;b<first;b++){html+='<div class="calDay empty"></div>';}
+      for(var day=1; day<=days; day++){
+        var id='cal_'+y+'_'+pad2(m+1)+'_'+pad2(day);
+        var checked=oldChecks[id]?' checked':'';
+        html+='<label class="calDay" for="'+id+'"><span>'+day+'</span><input id="'+id+'" class="calCheck" type="checkbox" aria-label="'+y+'年'+(m+1)+'月'+day+'日 達成"'+checked+'></label>';
+      }
+      html+='</div></div>';
+    }
+    area.innerHTML=html;
+    area.querySelectorAll('.calCheck').forEach(function(chk){chk.addEventListener('change',updateCalendarSummary);});
+    updateCalendarSummary();
+    if(showAlert) alert('3ヶ月カレンダーを表示しました');
+  }catch(e){
+    var el=$('calendarSummary'); if(el) el.textContent='カレンダー生成エラー：'+(e&&e.message?e.message:e);
+  }
+}
+function setCalendarThisMonth(){
+  var now=new Date();
+  if($('calendarYear')) $('calendarYear').value=now.getFullYear();
+  if($('calendarMonth')) $('calendarMonth').value=now.getMonth()+1;
+  renderHabitCalendar(true);
+}
+function updateCalendarSummary(){var el=$('calendarSummary'); if(el) el.textContent=calendarSummary();}
+function calendarSummary(){
+  var area=$('calendarArea');
+  if(!area || !area.querySelector('.calCheck')) return '3ヶ月カレンダー：未作成';
+  var base=getCalendarBase(); var lines=[];
+  for(var mi=0; mi<3; mi++){
+    var d=addMonths(base,mi); var y=d.getFullYear(); var m=d.getMonth();
+    var days=new Date(y,m+1,0).getDate(); var done=0;
+    for(var day=1; day<=days; day++){var chk=$('cal_'+y+'_'+pad2(m+1)+'_'+pad2(day)); if(chk&&chk.checked) done++;}
+    lines.push(monthLabel(y,m)+'：'+done+'/'+days+'日達成');
+  }
+  return lines.join('\n');
+}
+function ensureCalendar(){
+  var area=$('calendarArea');
+  if(area && !area.querySelector('.calCheck')) renderHabitCalendar(false);
+}
+
+
+function collectFormData(){
+  var data={version:'v19',savedAt:new Date().toISOString(),fields:{},radios:{},checks:{},goals:[]};
+  var transientIds={lineShareText:1,shareCode:1,importCode:1,patientShareUrl:1,replyShareUrl:1};
+  document.querySelectorAll('input, textarea, select').forEach(function(el){
+    if(el.id && transientIds[el.id]) return;
+    if(el.type==='file') return;
+    if(el.type==='radio'){
+      if(el.checked && el.name) data.radios[el.name]=el.value;
+      return;
+    }
+    if(el.type==='checkbox'){
+      if(el.classList && el.classList.contains('goal')){ if(el.checked) data.goals.push(el.value); return; }
+      if(el.id) data.checks[el.id]=!!el.checked;
+      return;
+    }
+    if(el.id) data.fields[el.id]=el.value;
+  });
+  data.scoresText=scoreText();
+  return data;
+}
+function applyFormData(data){
+  if(!data) return;
+  suppressAutoSave=true;
+  Object.keys(data.fields||{}).forEach(function(id){var el=$(id); if(el && el.type!=='file') el.value=data.fields[id];});
+  Object.keys(data.radios||{}).forEach(function(name){var val=data.radios[name]; Array.prototype.forEach.call(document.getElementsByName(name), function(el){ if(el.type==='radio') el.checked=(el.value===val); });});
+  document.querySelectorAll('input.goal[type="checkbox"]').forEach(function(el){el.checked=(data.goals||[]).indexOf(el.value)>=0;});
+  if($('calendarYear') && !$('calendarYear').value){var now=new Date(); $('calendarYear').value=now.getFullYear(); if($('calendarMonth')) $('calendarMonth').value=now.getMonth()+1;}
+  renderHabitCalendar(false);
+  setTimeout(function(){renderHabitCalendar(false);},300);
+  window.addEventListener('hashchange', function(){ if(location.hash==='#plan') ensureCalendar(); });
+  refreshRecordList();
+  Object.keys(data.checks||{}).forEach(function(id){var el=$(id); if(el && el.type==='checkbox') el.checked=!!data.checks[id];});
+  updateCalendarSummary();
+  if(data.scoreCache){scoreCache=data.scoreCache; renderScoreOutputFromCache();} else {calculateScores();}
+  if($('saveStatus')) $('saveStatus').textContent='読み込みました：'+new Date().toLocaleString('ja-JP');
+  setTimeout(function(){suppressAutoSave=false;},800);
+}
+
+
+
+function autoSaveKey(){return 'yusei_condition_autosave_v18'}
+var suppressAutoSave=false;
+var autoSaveTimer=null;
+function setAutoSaveStatus(text){var el=$('autoSaveStatus'); if(el) el.textContent=text;}
+function saveAutoDraft(){
+  if(suppressAutoSave) return;
+  try{
+    localStorage.setItem(autoSaveKey(), JSON.stringify(collectFormData()));
+    setAutoSaveStatus('自動保存：'+new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'}));
+  }catch(e){setAutoSaveStatus('自動保存：容量不足またはブラウザ設定で保存不可');}
+}
+function scheduleAutoSave(){
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer=setTimeout(saveAutoDraft,500);
+}
+function loadAutoDraft(){
+  try{
+    var raw=localStorage.getItem(autoSaveKey()) || localStorage.getItem('yusei_condition_autosave_v17') || localStorage.getItem('yusei_condition_autosave_v16');
+    if(!raw){setAutoSaveStatus('自動保存：新規入力'); return false;}
+    applyFormData(JSON.parse(raw));
+    setAutoSaveStatus('自動保存：前回の入力を復元しました');
+    return true;
+  }catch(e){setAutoSaveStatus('自動保存：復元できませんでした'); return false;}
+}
+function setupAutoSave(){
+  document.addEventListener('input',function(e){
+    if(e.target && e.target.type==='file') return;
+    updateActivePatientUI();
+    scheduleAutoSave();
+  },true);
+  document.addEventListener('change',function(e){
+    if(e.target && e.target.type==='file') return;
+    updateActivePatientUI();
+    scheduleAutoSave();
+  },true);
+  window.addEventListener('beforeunload',saveAutoDraft);
+}
+
+function recordsKey(){return 'yusei_condition_patient_records_v18'}
+function getRecords(){try{var raw=localStorage.getItem(recordsKey()) || localStorage.getItem('yusei_condition_patient_records_v17') || localStorage.getItem('yusei_condition_patient_records_v16') || '{}'; return JSON.parse(raw)||{};}catch(e){return {};}}
+function setRecords(obj){localStorage.setItem(recordsKey(), JSON.stringify(obj||{}));}
+function getRecordName(){var name=val('recordName') || val('pid') || ('患者データ '+new Date().toLocaleString('ja-JP')); return name.trim();}
+function refreshRecordList(){
+  var sel=$('recordSelect'); if(!sel) return;
+  var rec=getRecords(); var current=sel.value;
+  sel.innerHTML='<option value="">保存済みデータを選択</option>';
+  Object.keys(rec).sort(function(a,b){return (rec[b].savedAt||'').localeCompare(rec[a].savedAt||'');}).forEach(function(k){
+    var opt=document.createElement('option'); opt.value=k; opt.textContent=k+'｜'+(rec[k].savedLabel||''); sel.appendChild(opt);
+  });
+  if(current && rec[current]) sel.value=current;
+}
+function savePatientRecord(){
+  try{
+    var name=getRecordName(); var rec=getRecords();
+    var data=collectFormData(); data.savedLabel=new Date().toLocaleString('ja-JP'); data.recordName=name;
+    rec[name]=data; setRecords(rec); refreshRecordList(); if($('recordSelect')) $('recordSelect').value=name;
+    if($('recordStatus')) $('recordStatus').textContent='患者データとして保存しました：'+name;
+    alert('患者データとして保存しました');
+  }catch(e){alert('患者データを保存できませんでした');}
+}
+function loadPatientRecord(){
+  try{
+    var sel=$('recordSelect'); if(!sel || !sel.value){alert('読み込むデータを選択してください'); return;}
+    var rec=getRecords(); if(!rec[sel.value]){alert('データが見つかりません'); return;}
+    applyFormData(rec[sel.value]); if($('recordName')) $('recordName').value=sel.value;
+    if($('recordStatus')) $('recordStatus').textContent='読み込みました：'+sel.value;
+    alert('患者データを読み込みました');
+  }catch(e){alert('患者データを読み込めませんでした');}
+}
+function deletePatientRecord(){
+  try{
+    var sel=$('recordSelect'); if(!sel || !sel.value){alert('削除するデータを選択してください'); return;}
+    if(!confirm('選択した患者データを削除しますか？')) return;
+    var rec=getRecords(); delete rec[sel.value]; setRecords(rec); refreshRecordList();
+    if($('recordStatus')) $('recordStatus').textContent='削除しました';
+  }catch(e){alert('削除できませんでした');}
+}
+function saveLocal(){
+  try{localStorage.setItem('yusei_condition_saved_v17', JSON.stringify(collectFormData())); if($('saveStatus')) $('saveStatus').textContent='保存しました：'+new Date().toLocaleString('ja-JP'); alert('この端末に保存しました');}
+  catch(e){alert('保存できませんでした。ブラウザの設定や容量をご確認ください。');}
+}
+function loadLocal(){
+  try{var raw=localStorage.getItem('yusei_condition_saved_v17') || localStorage.getItem('yusei_condition_saved_v16'); if(!raw){alert('保存データがありません'); return;} applyFormData(JSON.parse(raw)); alert('保存データを読み込みました');}
+  catch(e){alert('読み込みできませんでした');}
+}
+function clearLocal(){
+  if(!confirm('この端末の保存データを削除しますか？')) return;
+  localStorage.removeItem('yusei_condition_saved_v17');
+  if($('saveStatus')) $('saveStatus').textContent='保存データを削除しました';
+}
+function b64EncodeUnicode(str){
+  var bytes=new TextEncoder().encode(str); var bin=''; bytes.forEach(function(b){bin+=String.fromCharCode(b);}); return btoa(bin);
+}
+function b64DecodeUnicode(str){
+  var bin=atob(str); var bytes=new Uint8Array(bin.length); for(var i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i); return new TextDecoder().decode(bytes);
+}
+function makeShareSummary(){
+  var text='【YUSEI CONDITION 共有】\n' +
+  '管理番号：'+val('pid')+'\n' +
+  '年代・性別：'+val('age')+' '+val('sex')+'\n' +
+  '目的：'+getGoals()+'\n' +
+  '主訴：'+val('mainConcern')+'\n\n' +
+  '【セルフチェック点数】\n'+scoreText()+'\n\n' +
+  '【自由記述】\n' +
+  '改善したいこと：'+val('improveText')+'\n' +
+  'いつ頃から：'+val('sinceText')+'\n' +
+  '悪化しやすい時：'+val('worseText')+'\n' +
+  '楽になる時：'+val('betterText')+'\n' +
+  '期待すること：'+val('expectText')+'\n\n' +
+  '【食事・栄養の確認】\n' +
+  '気になること：'+val('dietConcern')+'\n' +
+  '改善したいこと：'+val('dietGoal')+'\n' +
+  '制限・注意：'+val('dietRestriction')+'\n\n' +
+  '【改善点・目標・変化】\n' +
+  '改善点：'+val('patientGoals')+'\n' +
+  '目標：'+val('patientTargets')+'\n' +
+  '変化：'+val('patientChanges')+'\n' +
+  '次回確認：'+val('patientNextCheck')+'\n\n' +
+  '【習慣プラン】\n' +
+  '習慣1：'+val('habit1')+'\n' +
+  '習慣2：'+val('habit2')+'\n' +
+  '習慣3：'+val('habit3')+'\n' +
+  '曜日別：'+val('weeklyPlan')+'\n' +
+  '【食事アドバイス】\n' +
+  '食事改善点：'+val('nutritionFocus')+'\n' +
+  '食事アクション：'+val('nutritionAction')+'\n' +
+  '水分・間食・外食：'+val('hydrationSnackAdvice')+'\n' +
+  '注意点：'+val('nutritionCaution')+'\n\n' +
+  '3ヶ月達成状況：\n'+calendarSummary()+'\n\n' +
+  '【安全確認】\n'+val('redFlags')+'\n\n' +
+  '【同意】\n'+agreementText()+'\n\n' +
+  '※姿勢写真はこの共有テキストには含まれません。必要に応じて、同意のうえで別送してください。';
+  if($('lineShareText')) $('lineShareText').value=text;
+  return text;
+}
+function makeShareCode(){
+  try{var code='YC19:'+b64EncodeUnicode(JSON.stringify(collectFormData())); if($('shareCode')) $('shareCode').value=code; return code;}
+  catch(e){alert('共有コードを作成できませんでした'); return '';}
+}
+function importShareCode(){
+  try{
+    var raw=val('importCode'); if(!raw){alert('共有コードを貼り付けてください'); return;}
+    raw=raw.trim(); if(raw.indexOf('YC19:')===0) raw=raw.slice(5); else if(raw.indexOf('YC18:')===0) raw=raw.slice(5); else if(raw.indexOf('YC17:')===0) raw=raw.slice(5); else if(raw.indexOf('YC16:')===0) raw=raw.slice(5); else if(raw.indexOf('YC15:')===0) raw=raw.slice(5); else if(raw.indexOf('YC14:')===0) raw=raw.slice(5); else if(raw.indexOf('YC11:')===0) raw=raw.slice(5); else if(raw.indexOf('YC10:')===0) raw=raw.slice(5); else if(raw.indexOf('YC9:')===0) raw=raw.slice(4);
+    var data=JSON.parse(b64DecodeUnicode(raw)); applyFormData(data); alert('共有コードを読み込みました。チェックページで内容を確認してください。'); location.hash='#check';
+  }catch(e){alert('共有コードを読み込めませんでした。コード全体が貼り付けられているか確認してください。');}
+}
+
+function currentBaseUrl(){
+  return location.origin + location.pathname;
+}
+function collectShareData(kind){
+  if(hasCheckedAnswers() || !Object.keys(scoreCache||{}).length) calculateScores(); else renderScoreOutputFromCache();
+  var patientIds=['pid','age','sex','mainConcern','improveText','sinceText','worseText','betterText','expectText','dietConcern','dietGoal','dietRestriction','redFlags','signature','consentDate'];
+  var replyIds=['pid','age','sex','mainConcern','patientGoals','patientTargets','patientChanges','patientNextCheck','improvementFocus','improvementPriority','habit1','habit2','habit3','weeklyPlan','nutritionFocus','nutritionAction','hydrationSnackAdvice','nutritionCaution','patientReport','calendarYear','calendarMonth'];
+  var ids=(kind==='reply')?replyIds:patientIds;
+  var data={version:'v19',shareKind:kind||'patient',savedAt:new Date().toISOString(),fields:{},radios:{},checks:{},goals:[],scoreCache:Object.assign({},scoreCache)};
+  ids.forEach(function(id){var el=$(id); if(el) data.fields[id]=el.value||'';});
+  ['agree1','agree2','agree3','agree4'].forEach(function(id){var el=$(id); if(el) data.checks[id]=!!el.checked;});
+  document.querySelectorAll('input.goal[type="checkbox"]:checked').forEach(function(el){data.goals.push(el.value);});
+  data.scoresText=scoreText();
+  return data;
+}
+function makeEncodedPayload(kind){
+  return 'YC19:' + b64EncodeUnicode(JSON.stringify(collectShareData(kind||'patient')));
+}
+function setUrlLengthStatus(id,len){
+  var el=$(id); if(!el) return;
+  if(len<1800) el.innerHTML='<span class="lengthOk">URL長さ：'+len+'文字。LINE送信しやすい長さです。</span>';
+  else if(len<3500) el.innerHTML='<span class="lengthWarn">URL長さ：'+len+'文字。送れない場合は予備ツールの共有コードを使ってください。</span>';
+  else el.innerHTML='<span class="lengthWarn">URL長さ：'+len+'文字。長すぎる可能性があります。予備ツールの共有コード推奨です。</span>';
+}
+function makeShareUrl(targetHash, outputId, kind){
+  try{
+    var code=makeEncodedPayload(kind);
+    var url=currentBaseUrl() + '?yc=' + encodeURIComponent(code) + (targetHash || '#check');
+    if($(outputId)) $(outputId).value=url;
+    if(kind==='patient'){
+      setUrlLengthStatus('patientUrlLengthStatus',url.length);
+      if($('lineShareText')) $('lineShareText').value='優星鍼灸院のコンディションチェックを入力しました。\n下記URLから確認をお願いします。\n\n'+url+'\n\n※姿勢写真は別で送ります。';
+    }
+    if(kind==='reply') setUrlLengthStatus('replyUrlLengthStatus',url.length);
+    if(url.length>3500){alert('共有URLが長くなっています。LINEで開けない場合は、予備ツールの共有コードを使ってください。');}
+    return url;
+  }catch(e){alert('共有URLを作成できませんでした'); return '';}
+}
+function makePatientShareUrl(){return makeShareUrl('#check','patientShareUrl','patient');}
+function makeReplyShareUrl(){return makeShareUrl('#patient','replyShareUrl','reply');}
+function importFromUrlIfAny(){
+  try{
+    var params=new URLSearchParams(location.search||'');
+    var raw=params.get('yc');
+    if(!raw) return false;
+    raw=decodeURIComponent(raw).trim();
+    if(raw.indexOf('YC19:')===0) raw=raw.slice(5); else if(raw.indexOf('YC18:')===0) raw=raw.slice(5); else if(raw.indexOf('YC17:')===0) raw=raw.slice(5); else if(raw.indexOf('YC16:')===0) raw=raw.slice(5);
+    else if(raw.indexOf('YC15:')===0) raw=raw.slice(5);
+    else if(raw.indexOf('YC14:')===0) raw=raw.slice(5);
+    else if(raw.indexOf('YC12:')===0) raw=raw.slice(5);
+    else if(raw.indexOf('YC11:')===0) raw=raw.slice(5);
+    else if(raw.indexOf('YC10:')===0) raw=raw.slice(5);
+    else if(raw.indexOf('YC9:')===0) raw=raw.slice(4);
+    var data=JSON.parse(b64DecodeUnicode(raw));
+    applyFormData(data);
+    if($('saveStatus')) $('saveStatus').textContent='共有URLから読み込みました：'+new Date().toLocaleString('ja-JP');
+    if(!location.hash) location.hash='#check';
+    return true;
+  }catch(e){alert('共有URLのデータを読み込めませんでした。URL全体が正しく貼られているか確認してください。'); return false;}
+}
+async function shareUrlField(id,title){
+  var text=val(id);
+  if(!text){alert('先にURLを作成してください'); return;}
+  try{
+    if(navigator.share){ await navigator.share({title:title||'YUSEI CONDITION共有URL', text:text}); }
+    else { copyText(id); alert('共有機能が使えないため、URLをコピーしました。LINEに貼り付けてください。'); }
+  }catch(e){}
+}
+
+async function shareLine(){
+  var text=val('lineShareText') || makeShareSummary();
+  try{
+    if(navigator.share){ await navigator.share({title:'YUSEI CONDITION共有', text:text}); }
+    else { copyText('lineShareText'); alert('共有機能が使えないため、テキストをコピーしました。LINEに貼り付けてください。'); }
+  }catch(e){}
+}
+
+
+function setupStartGuide(){
+  var isLine=/Line\//i.test(navigator.userAgent||'');
+  if(isLine && $('lineBrowserNotice')) $('lineBrowserNotice').style.display='block';
+  var done=localStorage.getItem('yusei_condition_homeguide_done_v19')==='1';
+  if(done && !location.hash) location.hash='#consent';
+  if($('startDoneBtn')) $('startDoneBtn').addEventListener('click',function(){if($('skipGuideChk')&&$('skipGuideChk').checked){localStorage.setItem('yusei_condition_homeguide_done_v19','1');} location.hash='#consent';});
+}
+
+window.YC_renderHabitCalendar=renderHabitCalendar;
+window.YC_setCalendarThisMonth=setCalendarThisMonth;
+
+function updateActivePatientUI(){
+  var name=val('pid') || '未入力';
+  document.querySelectorAll('#activePatientPill').forEach(function(el){el.textContent='管理番号：'+name;});
+  var rn=$('recordName'); if(rn && !rn.value && val('pid')) rn.value=val('pid');
+}
+
+function init(){
+  setupStartGuide();
+  if($('consentDate') && !$('consentDate').value){try{$('consentDate').valueAsDate=new Date();}catch(e){}}
+  if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(regs){regs.forEach(function(r){r.unregister();})}).catch(function(){});}
+  document.querySelectorAll('input[type="file"][data-preview]').forEach(function(input){input.addEventListener('change',function(){previewPhoto(input,input.getAttribute('data-preview'));});});
+  var pidEl=$('pid'); if(pidEl) pidEl.addEventListener('input',updateActivePatientUI);
+  var calcBtn=$('calcBtn'); if(calcBtn) calcBtn.addEventListener('click',calculateScores);
+  var openAllQuestionsBtn=$('openAllQuestionsBtn'); if(openAllQuestionsBtn) openAllQuestionsBtn.addEventListener('click',function(){document.querySelectorAll('details.qGroup').forEach(function(d){d.open=true;});});
+  var closeQuestionsBtn=$('closeQuestionsBtn'); if(closeQuestionsBtn) closeQuestionsBtn.addEventListener('click',function(){document.querySelectorAll('details.qGroup').forEach(function(d){d.open=false;});});
+  var patientBtn=$('patientBtn'); if(patientBtn) patientBtn.addEventListener('click',makePatientReport);
+  var extractAiAnswerBtn=$('extractAiAnswerBtn'); if(extractAiAnswerBtn) extractAiAnswerBtn.addEventListener('click',extractAiAnswerToFields);
+  var clearAiPasteBtn=$('clearAiPasteBtn'); if(clearAiPasteBtn) clearAiPasteBtn.addEventListener('click',clearAiPaste);
+  var promptBtn=$('promptBtn'); if(promptBtn) promptBtn.addEventListener('click',makePrompt);
+  var calendarBtn=$('calendarBtn'); if(calendarBtn) calendarBtn.addEventListener('click',function(){renderHabitCalendar(true);});
+  var calendarThisMonthBtn=$('calendarThisMonthBtn'); if(calendarThisMonthBtn) calendarThisMonthBtn.addEventListener('click',setCalendarThisMonth);
+  var calYear=$('calendarYear'); if(calYear) calYear.addEventListener('change',function(){renderHabitCalendar(false);});
+  var calMonth=$('calendarMonth'); if(calMonth) calMonth.addEventListener('change',function(){renderHabitCalendar(false);});
+  var printBtn=$('printBtn'); if(printBtn) printBtn.addEventListener('click',function(){window.print();});
+  var saveRecordBtn=$('saveRecordBtn'); if(saveRecordBtn) saveRecordBtn.addEventListener('click',savePatientRecord);
+  var loadRecordBtn=$('loadRecordBtn'); if(loadRecordBtn) loadRecordBtn.addEventListener('click',loadPatientRecord);
+  var deleteRecordBtn=$('deleteRecordBtn'); if(deleteRecordBtn) deleteRecordBtn.addEventListener('click',deletePatientRecord);
+  var refreshRecordBtn=$('refreshRecordBtn'); if(refreshRecordBtn) refreshRecordBtn.addEventListener('click',refreshRecordList);
+  var recordSelect=$('recordSelect'); if(recordSelect) recordSelect.addEventListener('change',function(){if(this.value && $('recordName')) $('recordName').value=this.value;});
+  var saveLocalBtn=$('saveLocalBtn'); if(saveLocalBtn) saveLocalBtn.addEventListener('click',saveLocal);
+  var loadLocalBtn=$('loadLocalBtn'); if(loadLocalBtn) loadLocalBtn.addEventListener('click',loadLocal);
+  var clearLocalBtn=$('clearLocalBtn'); if(clearLocalBtn) clearLocalBtn.addEventListener('click',clearLocal);
+  var makeShareBtn=$('makeShareBtn'); if(makeShareBtn) makeShareBtn.addEventListener('click',makeShareSummary);
+  var makePatientUrlBtn=$('makePatientUrlBtn'); if(makePatientUrlBtn) makePatientUrlBtn.addEventListener('click',makePatientShareUrl);
+  var makeReplyUrlBtn=$('makeReplyUrlBtn'); if(makeReplyUrlBtn) makeReplyUrlBtn.addEventListener('click',makeReplyShareUrl);
+  var sharePatientUrlBtn=$('sharePatientUrlBtn'); if(sharePatientUrlBtn) sharePatientUrlBtn.addEventListener('click',async function(){ if(!val('patientShareUrl')) makePatientShareUrl(); var text=val('lineShareText') || val('patientShareUrl'); try{ if(navigator.share){ await navigator.share({title:'YUSEI CONDITION 入力共有', text:text}); } else { copyText('lineShareText'); alert('共有機能が使えないため、LINE文面をコピーしました。LINEに貼り付けてください。'); } }catch(e){} });
+  var shareReplyUrlBtn=$('shareReplyUrlBtn'); if(shareReplyUrlBtn) shareReplyUrlBtn.addEventListener('click',function(){shareUrlField('replyShareUrl','YUSEI CONDITION 返信用URL');});
+  var makeCodeBtn=$('makeCodeBtn'); if(makeCodeBtn) makeCodeBtn.addEventListener('click',makeShareCode);
+  var importCodeBtn=$('importCodeBtn'); if(importCodeBtn) importCodeBtn.addEventListener('click',importShareCode);
+  var shareLineBtn=$('shareLineBtn'); if(shareLineBtn) shareLineBtn.addEventListener('click',shareLine);
+  document.querySelectorAll('[data-copy]').forEach(function(btn){btn.addEventListener('click',function(){copyText(btn.getAttribute('data-copy'));});});
+  updateActivePatientUI();
+  calculateScores();
+  if($('calendarYear') && !$('calendarYear').value){var now=new Date(); $('calendarYear').value=now.getFullYear(); if($('calendarMonth')) $('calendarMonth').value=now.getMonth()+1;}
+  renderHabitCalendar(false);
+  setTimeout(function(){renderHabitCalendar(false);},300);
+  window.addEventListener('hashchange', function(){ if(location.hash==='#plan') ensureCalendar(); });
+  setupAutoSave();
+  var importedFromUrl=importFromUrlIfAny();
+  if(!importedFromUrl) loadAutoDraft();
+  refreshRecordList();
+}
+
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+})();
+</script>
+</body>
+</html>
